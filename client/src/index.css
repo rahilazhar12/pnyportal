@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.plusround {
+  height: 2.25rem;
+  background: #ebf2fd;
+  width: 2.25rem;
+  display: inline-block;
+  border-radius: 50%;
+  line-height: 1.9rem;
+  margin: 0 0.3125rem;
+  text-align: center;
+  text-decoration: none;
+  color: #5489ea !important;
+  cursor: pointer;
+}
