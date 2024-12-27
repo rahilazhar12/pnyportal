@@ -304,7 +304,7 @@ const Signin = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <Link to='/rest-password' className="text-sm md:ml-1 underline text-blue-700">Forget Password</Link>
+              <Link to='/rest-password' className="text-sm md:ml-1 underline text-blue-700">Forgot password?</Link>
               <Button
                 type="submit"
                 fullWidth

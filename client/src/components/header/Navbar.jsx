@@ -1,18 +1,7 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSessionStorage } from "../../context/Sessionstorage";
 import logo from "../../assets/img/logo/logo.png";
-import { NavLink } from "react-router-dom";
-import {
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  Button,
-  DialogContent,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import DropdownUser from "../profile/Dropdownuser";
 
 const Navbar = () => {
@@ -20,26 +9,33 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [openUserTypeDialog, setOpenUserTypeDialog] = useState(false);
-  const [openLoginTypeDialog, setOpenLoginTypeDialog] = useState(false); // State for login type dialog
 
-  const theme = useTheme();
-  const isFullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  // Dropdown toggles
+  const [isRegisterDropdownOpen, setIsRegisterDropdownOpen] = useState(false);
+  const [isLoginDropdownOpen, setIsLoginDropdownOpen] = useState(false);
 
+  // Toggle mobile menu
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const handleUserRegisterClick = () => {
-    setOpenUserTypeDialog(true);
+  // Toggle Register dropdown
+  const handleRegisterDropdownToggle = () => {
+    setIsRegisterDropdownOpen(!isRegisterDropdownOpen);
+    // Ensure login dropdown is closed if open
+    setIsLoginDropdownOpen(false);
   };
 
-  const handleUserLoginClick = () => {
-    setOpenLoginTypeDialog(true); // Open dialog for login selection
+  // Toggle Login dropdown
+  const handleLoginDropdownToggle = () => {
+    setIsLoginDropdownOpen(!isLoginDropdownOpen);
+    // Ensure register dropdown is closed if open
+    setIsRegisterDropdownOpen(false);
   };
 
-  const handleUserTypeSelection = (userType) => {
-    setOpenUserTypeDialog(false);
+  // Handle register type selection
+  const handleRegisterTypeSelection = (userType) => {
+    setIsRegisterDropdownOpen(false);
     setTimeout(() => {
       if (userType === "individual") {
         navigate("/register-student");
@@ -49,17 +45,19 @@ const Navbar = () => {
     }, 100);
   };
 
+  // Handle login type selection
   const handleLoginTypeSelection = (loginType) => {
-    setOpenLoginTypeDialog(false);
+    setIsLoginDropdownOpen(false);
     setTimeout(() => {
       if (loginType === "individual") {
-        navigate("/login-users"); // Navigate to individual login
+        navigate("/login-users");
       } else if (loginType === "company") {
-        navigate("/company-login"); // Navigate to company login
+        navigate("/company-login");
       }
     }, 100);
   };
 
+  // Logout
   const logouthandler = () => {
     logout();
   };
@@ -67,7 +65,8 @@ const Navbar = () => {
   return (
     <>
       <nav className="bg-white shadow-md w-full sticky top-0 z-50">
-        <div className="container mx-auto px-4 lg:px-16  flex items-center justify-between">
+        <div className="container mx-auto px-4 lg:px-16 flex items-center justify-between">
+          {/* Logo Section */}
           <div className="flex items-center">
             <Link to="/">
               <img src={logo} alt="Logo" className="w-16" />
@@ -80,69 +79,115 @@ const Navbar = () => {
             </div>
           </div>
 
+          {/* Desktop Nav Items */}
           <div className="hidden md:flex space-x-4">
             {role === "User" && (
+              <Link
+                to="/new-profile"
+                className="px-4 py-2 text-black transition duration-300 ease-in-out"
+              >
+                Profile
+              </Link>
+            )}
+
+            {role === "company" && (
               <>
                 <Link
-                  to="/new-profile"
+                  to="/post-jobs"
+                  className="px-4 py-2 text-black transition duration-300 ease-in-out"
+                >
+                  Post Jobs
+                </Link>
+                <Link
+                  to="/company-profile"
                   className="px-4 py-2 text-black transition duration-300 ease-in-out"
                 >
                   Profile
                 </Link>
               </>
             )}
-            {role === "company" && (
-              <>
-                <Link
-                  to="/post-jobs"
-                  className="px-4 py-2 text-black  transition duration-300 ease-in-out"
-                >
-                  Post Jobs
-                </Link>
-                <Link
-                  to="/company-profile"
-                  className="px-4 py-2 text-black  transition duration-300 ease-in-out"
-                >
-                  Profile
-                </Link>
-              </>
-            )}
           </div>
 
-          <div className="hidden md:flex space-x-4">
+          {/* Auth Buttons & Dropdowns for Desktop */}
+          <div className="hidden md:flex space-x-4 relative">
             {user ? (
               <DropdownUser />
             ) : (
               <>
-                <button
-                  onClick={handleUserRegisterClick}
-                  className=" text-white px-4  rounded-md bg-[#46b749] transition duration-300 ease-in-out"
-                >
-                  Register
-                </button>
+                {/* Register Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={handleRegisterDropdownToggle}
+                    className="text-white px-4 py-1 rounded-md bg-[#46b749] transition duration-300 ease-in-out"
+                  >
+                    Register
+                  </button>
+                  {isRegisterDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-md z-50">
+                      <button
+                        onClick={() =>
+                          handleRegisterTypeSelection("individual")
+                        }
+                        className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                      >
+                        Individual
+                      </button>
+                      <button
+                        onClick={() => handleRegisterTypeSelection("company")}
+                        className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                      >
+                        Company
+                      </button>
+                    </div>
+                  )}
+                </div>
 
-                <button
-                  onClick={handleUserLoginClick}
-                  className=" text-white px-4 py-1 rounded-md bg-[#337ab7] transition duration-300 ease-in-out"
-                >
-                  Login
-                </button>
+                {/* Login Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={handleLoginDropdownToggle}
+                    className="text-white px-4 py-1 rounded-md bg-[#337ab7] transition duration-300 ease-in-out"
+                  >
+                    Login
+                  </button>
+                  {isLoginDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-md z-50">
+                      <button
+                        onClick={() => handleLoginTypeSelection("individual")}
+                        className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                      >
+                        Individual
+                      </button>
+                      <button
+                        onClick={() => handleLoginTypeSelection("company")}
+                        className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                      >
+                        Company
+                      </button>
+                    </div>
+                  )}
+                </div>
 
+                {/* Post a Job */}
                 <Link
                   to="/company-login"
                   className="text-white px-4 py-1 rounded-md bg-[#233261] transition duration-300 ease-in-out"
                 >
                   Post a Job
                 </Link>
+
+                {/* Admin */}
                 <Link
                   to="/admin-login"
-                  className="px-4 py-1 rounded-md bg-yellow-700  text-white transition duration-300 ease-in-out"
+                  className="px-4 py-1 rounded-md bg-yellow-700 text-white transition duration-300 ease-in-out"
                 >
                   Admin
                 </Link>
               </>
             )}
           </div>
+
+          {/* Mobile Toggle Button */}
           <div className="md:hidden">
             <button
               onClick={toggleMobileMenu}
@@ -166,122 +211,6 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* User Type Selection Dialog */}
-        <Dialog
-          fullScreen={isFullScreen}
-          open={openUserTypeDialog}
-          onClose={() => setOpenUserTypeDialog(false)}
-          PaperProps={{
-            style: {
-              borderRadius: "12px",
-              boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
-            },
-          }}
-        >
-          <DialogContent
-            style={{
-              borderRadius: "10px",
-              backgroundColor: "rgba(255, 255, 255, 0.95)",
-              padding: "20px",
-            }}
-          >
-            <DialogTitle
-              style={{ textAlign: "center", color: "#333", fontSize: "1.5rem" }}
-            >
-              Select Your Account Type
-            </DialogTitle>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              align="center"
-              style={{ marginBottom: "16px" }}
-            >
-              Are you here for personal growth or business success
-            </Typography>
-          </DialogContent>
-          <DialogActions
-            style={{ justifyContent: "center", paddingBottom: "16px" }}
-          >
-            <Button
-              onClick={() => handleUserTypeSelection("individual")}
-              variant="outlined"
-              style={{
-                margin: "8px",
-                borderColor: "#007FFF",
-                color: "#007FFF",
-              }}
-            >
-              Individual
-            </Button>
-            <Button
-              onClick={() => handleUserTypeSelection("company")}
-              variant="contained"
-              color="primary"
-              style={{ margin: "8px" }}
-            >
-              Company
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* Login Type Selection Dialog */}
-        <Dialog
-          fullScreen={isFullScreen}
-          open={openLoginTypeDialog}
-          onClose={() => setOpenLoginTypeDialog(false)}
-          PaperProps={{
-            style: {
-              borderRadius: "12px",
-              boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
-            },
-          }}
-        >
-          <DialogContent
-            style={{
-              borderRadius: "10px",
-              backgroundColor: "rgba(255, 255, 255, 0.95)",
-              padding: "20px",
-            }}
-          >
-            <DialogTitle
-              style={{ textAlign: "center", color: "#333", fontSize: "1.5rem" }}
-            >
-              Select Login Type
-            </DialogTitle>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              align="center"
-              style={{ marginBottom: "16px" }}
-            >
-              Choose whether you are logging in as an individual or a company.
-            </Typography>
-          </DialogContent>
-          <DialogActions
-            style={{ justifyContent: "center", paddingBottom: "16px" }}
-          >
-            <Button
-              onClick={() => handleLoginTypeSelection("individual")}
-              variant="outlined"
-              style={{
-                margin: "8px",
-                borderColor: "#007FFF",
-                color: "#007FFF",
-              }}
-            >
-              Individual
-            </Button>
-            <Button
-              onClick={() => handleLoginTypeSelection("company")}
-              variant="contained"
-              color="primary"
-              style={{ margin: "8px" }}
-            >
-              Company
-            </Button>
-          </DialogActions>
-        </Dialog>
-
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div
@@ -295,44 +224,100 @@ const Navbar = () => {
               <Link to="/" className="block text-gray-700 hover:text-blue-900">
                 Home
               </Link>
+
               {role === "company" && (
                 <>
-                  <Link to="/post-jobs" className="hover:text-blue-900">
+                  <Link
+                    to="/post-jobs"
+                    className="block text-gray-700 hover:text-blue-900"
+                  >
                     Post a Job
                   </Link>
-                  <Link to="/company-profile" className="hover:text-blue-900">
+                  <Link
+                    to="/company-profile"
+                    className="block text-gray-700 hover:text-blue-900"
+                  >
                     Profile
                   </Link>
                 </>
               )}
-              <div className="flex flex-col space-y-2">
-                {user ? null : (
-                  <>
-                    <Button
-                      onClick={handleUserRegisterClick}
+
+              {/* If no user is logged in */}
+              {!user && (
+                <>
+                  {/* Register Dropdown for Mobile */}
+                  <div className="flex flex-col space-y-2">
+                    <button
+                      onClick={handleRegisterDropdownToggle}
                       className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-600 transition duration-300 ease-in-out"
                     >
-                      User Register
-                    </Button>
-                    <Button
-                      onClick={handleUserLoginClick}
+                      Register
+                    </button>
+                    {/* Render register options below (inline) if open */}
+                    {isRegisterDropdownOpen && (
+                      <div className="ml-4 mt-2 space-y-2">
+                        <button
+                          onClick={() =>
+                            handleRegisterTypeSelection("individual")
+                          }
+                          className="block w-full text-left px-4 py-1 bg-gray-100 rounded hover:bg-gray-200"
+                        >
+                          Individual
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleRegisterTypeSelection("company")
+                          }
+                          className="block w-full text-left px-4 py-1 bg-gray-100 rounded hover:bg-gray-200"
+                        >
+                          Company
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Login Dropdown for Mobile */}
+                  <div className="flex flex-col space-y-2 mt-2">
+                    <button
+                      onClick={handleLoginDropdownToggle}
                       className="border border-pink-500 text-pink-500 px-4 py-2 rounded-md hover:bg-pink-50 transition duration-300 ease-in-out"
                     >
-                      User Login
-                    </Button>
-                  </>
-                )}
-                {(role === "User" || role === "pnyalumini") && (
-                  <NavLink
-                    to="/new-profile"
-                    className={({ isActive }) =>
-                      isActive ? "text-blue-900" : "hover:text-blue-900"
-                    }
-                  >
-                    Profile Builder
-                  </NavLink>
-                )}
-              </div>
+                      Login
+                    </button>
+                    {/* Render login options below (inline) if open */}
+                    {isLoginDropdownOpen && (
+                      <div className="ml-4 mt-2 space-y-2">
+                        <button
+                          onClick={() =>
+                            handleLoginTypeSelection("individual")
+                          }
+                          className="block w-full text-left px-4 py-1 bg-gray-100 rounded hover:bg-gray-200"
+                        >
+                          Individual
+                        </button>
+                        <button
+                          onClick={() => handleLoginTypeSelection("company")}
+                          className="block w-full text-left px-4 py-1 bg-gray-100 rounded hover:bg-gray-200"
+                        >
+                          Company
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* If User or Alumni is logged in */}
+              {(role === "User" || role === "pnyalumini") && (
+                <NavLink
+                  to="/new-profile"
+                  className={({ isActive }) =>
+                    isActive ? "text-blue-900" : "hover:text-blue-900"
+                  }
+                >
+                  Profile Builder
+                </NavLink>
+              )}
             </div>
           </div>
         )}
