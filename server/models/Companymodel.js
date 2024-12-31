@@ -8,7 +8,7 @@ const CompanySchema = new mongoose.Schema(
         },
         about: {
             type: String,
-            required: true
+            required: false
         },
         ntnnumber: {
             type: String,
