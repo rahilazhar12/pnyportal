@@ -53,7 +53,7 @@ dotenv.config();
 // datbase conection
 dbConnection();
 
-app.use(express.json());
+app.use(express.json({ limit: '50mb' })); // Increase limit to 50MB
 app.use(cookieParser());
 
 app.use("/uploads", express.static("./uploads"));
