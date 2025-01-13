@@ -1,15 +1,19 @@
-// src/components/JobPreferences.jsx
 import React from "react";
 import CreatableSelect from "react-select/creatable";
 import { MdEdit } from "react-icons/md";
-
-// Import the custom hook
 import { useJobPreferences } from "../../hooks/useJobPreferences";
-// Import salary ranges constant
 import { SALARY_RANGES } from "../../../constants/constants";
 
+// Define default skills
+const DEFAULT_SKILLS = [
+  { value: "React", label: "React" },
+  { value: "NodeJS", label: "NodeJS" },
+  { value: "JavaScript", label: "JavaScript" },
+  { value: "HTML", label: "HTML" },
+  { value: "CSS", label: "CSS" },
+];
+
 const JobPreferences = () => {
-  // Use your environment variable or pass as prop
   const API_URL = import.meta.env.VITE_API_URL;
 
   const {
@@ -29,12 +33,10 @@ const JobPreferences = () => {
     <div className="bg-white rounded-lg shadow-md p-5 max-w-2xl mx-auto mt-10 font-source-sans">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold text-black">Job Preferences</h2>
-
-        {/* If not editing and no existing preferences, show plus sign */}
         {!isEditing && !jobPreferences && (
           <button
             onClick={handleEdit}
-            className="flex items-center plusround justify-center  text-2xl font-bold rounded-full transition"
+            className="flex items-center plusround justify-center text-2xl font-bold rounded-full transition"
             aria-label={
               isEditing ? "Close Job Preferences" : "Add Job Preferences"
             }
@@ -42,8 +44,6 @@ const JobPreferences = () => {
             +
           </button>
         )}
-
-        {/* If not editing but preferences exist, show edit icon */}
         {!isEditing && jobPreferences && (
           <div className="flex space-x-4">
             <button onClick={handleEdit} className="text-2xl font-bold plusround">
@@ -51,12 +51,10 @@ const JobPreferences = () => {
             </button>
           </div>
         )}
-
-        {/* If editing and jobPreferences is null, show minus sign */}
         {isEditing && jobPreferences === null && (
           <button
             onClick={handleCancel}
-            className="flex items-center  w-10 h-10 plusround justify-center  text-2xl rounded-full transition"
+            className="flex items-center w-10 h-10 plusround justify-center text-2xl rounded-full transition"
             aria-label="Close Job Preferences"
           >
             -
@@ -68,7 +66,6 @@ const JobPreferences = () => {
         <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">{notification}</div>
       )}
 
-      {/* View Mode (display preferences) */}
       {!isEditing && jobPreferences ? (
         <div className="space-y-4">
           <p className="text-black text-base">Help us match you with your next job</p>
@@ -76,24 +73,20 @@ const JobPreferences = () => {
             <div className="flex flex-col">
               <h3 className="text-lg font-semibold text-black">Desired Job Title</h3>
               <p className="text-black mb-3">{jobPreferences.title}</p>
-
               <h3 className="text-lg font-semibold text-black">Desired Salary</h3>
               <p className="text-black mb-3">{jobPreferences.salary}</p>
-
               <h3 className="text-lg font-semibold text-black">Desired Skills</h3>
               <p className="text-black mb-3">{jobPreferences.skills.join(", ")}</p>
             </div>
           </div>
         </div>
       ) : (
-        // If not editing and no preferences exist
         !isEditing &&
         jobPreferences === null && (
           <div className="text-base mt-4">No job preferences found.</div>
         )
       )}
 
-      {/* Edit Mode (render the form) */}
       {isEditing && (
         <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
           <div>
@@ -140,6 +133,7 @@ const JobPreferences = () => {
             </label>
             <CreatableSelect
               isMulti
+              options={DEFAULT_SKILLS} // Pass default skills here
               onChange={handleSkillsChange}
               value={editPreferences.skills}
               placeholder="e.g., React, NodeJS, JavaScript"

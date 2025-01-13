@@ -94,9 +94,9 @@ export default function usePersonalInfo() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check if file size exceeds 50KB
-      if (file.size > 50 * 1024) {
-        setMessage("Please select an image with a size of 50KB or less.");
+      // Check if file size exceeds 5MB
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage("Please select an image with a size of 5MB or less.");
         setIsProfilePictureValid(false);
         return;
       }
@@ -178,9 +178,8 @@ export default function usePersonalInfo() {
 
       // Instead of a full page reload, we can simply refetch or rely on local state:
       // Optionally refetch here if needed:
-      // await fetchData(); 
+      // await fetchData();
       // For now, let's just set isEditing to false and let local state do the job.
-
     } catch (error) {
       setMessage(error.message || "Failed to submit personal information.");
     } finally {

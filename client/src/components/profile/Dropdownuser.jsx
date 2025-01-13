@@ -5,13 +5,14 @@ import { useSessionStorage } from "../../context/Sessionstorage";
 const DropdownUser = () => {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { logout, user } = useSessionStorage();
+  const { logout, user, role } = useSessionStorage();
 
   const logouthandler = () => {
     logout();
     navigate("/");
   };
 
+  console.log(role, "role");
   return (
     <div className="relative">
       {/* User Dropdown Trigger */}
@@ -100,7 +101,13 @@ const DropdownUser = () => {
             </li>
             <li>
               <Link
-                to="/settingsuser"
+                to={
+                  user?.role === "admin"
+                    ? "/admin-dashboard/admin-profile"
+                    : user?.role === "company"
+                    ? "/companysettings" // Navigate to company settings page for "company" role
+                    : "/settingsuser"
+                }
                 className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
               >
                 <svg
@@ -123,6 +130,7 @@ const DropdownUser = () => {
                 Settings
               </Link>
             </li>
+
             {/* <li>
               <Link
                 to="/settings"

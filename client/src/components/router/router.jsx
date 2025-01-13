@@ -20,6 +20,7 @@ import Mainview from "../../pages/Userauth/Userprofile/Mainview";
 import Settinguser from "../../pages/Userauth/settings/profile";
 import Cv1 from "../Cv/Cv1";
 import Resetpassword from "../../pages/resetpass/Resetpassword";
+import CompanySettings from "../../pages/Company/Settings/Companysettings";
 
 // Lazy loaded components
 const Home = lazy(() => import("../../pages/home/Home"));
@@ -82,6 +83,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["company"]}>
             <Postajob />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "companysettings",
+        element: (
+          <ProtectedRoute allowedRoles={["company"]}>
+            <CompanySettings />
           </ProtectedRoute>
         ),
       },

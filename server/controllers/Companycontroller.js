@@ -77,6 +77,68 @@ const CreateCompany = async (req, res) => {
   }
 };
 
+const UpdateCompanyProfile = async (req, res) => {
+  const { id } = req.user; // Get the company ID from the route parameter
+  const {
+    name,
+    ntnnumber,
+    email,
+    personincontact,
+    about,
+    city,
+    website,
+    facebook,
+    linkedin,
+    cnic,
+  } = req.body;
+
+  try {
+    // Check if the company exists
+    const company = await Company.findById(id);
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    // Update fields
+    const updatedCompany = await Company.findByIdAndUpdate(
+      id,
+      {
+        name,
+        ntnnumber,
+        email,
+        personincontact,
+        about,
+        city,
+        website,
+        facebook,
+        linkedin,
+        cnic,
+      },
+      { new: true } // Return the updated document
+    );
+
+    res.status(200).json({
+      message: "Company profile updated successfully",
+      company: updatedCompany,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const GetCompanyById = async (req, res) => {
+  const { id } = req.user;
+  try {
+    const company = await Company.findById(id); // Fetch company by ID
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+    res.status(200).json(company);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const VerifyCompany = async (req, res) => {
   const { email, code } = req.body;
 
@@ -171,31 +233,7 @@ const Logoutcompany = (req, res) => {
   }
 };
 
-// const approvecompanyrequest = async (req, res) => {
-//     const { status } = req.body; // Assuming 'status' can be 'approved' or 'rejected'
 
-//     try {
-//         const company = await Company.findById(req.params.id);
-
-//         if (!company) {
-//             return res.status(404).json({ message: "Company not found." });
-//         }
-
-//         if (status === "approved") {
-//             company.isApproved = true;
-//             await company.save();
-//             res.status(200).json({ message: "Company approved successfully." });
-//         } else if (status === "rejected") {
-//             // Delete the company record if the admin rejects the request
-//             await Company.findByIdAndDelete(req.params.id);
-//             res.status(200).json({ message: "Company rejected and deleted successfully." });
-//         } else {
-//             res.status(400).json({ message: "Invalid status. Please specify 'approved' or 'rejected'." });
-//         }
-//     } catch (error) {
-//         res.status(400).json({ message: error.message });
-//     }
-// }
 
 const approvecompanyrequest = async (req, res) => {
   const { status } = req.body; // Assuming 'status' is a boolean or 'rejected'
@@ -247,9 +285,11 @@ const Getallcompanies = async (req, res) => {
 
 module.exports = {
   CreateCompany,
+  UpdateCompanyProfile,
   VerifyCompany,
   approvecompanyrequest,
   LoginCompany,
   Logoutcompany,
   Getallcompanies,
+  GetCompanyById
 };

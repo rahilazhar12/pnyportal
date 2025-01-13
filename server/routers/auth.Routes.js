@@ -18,10 +18,13 @@ const { ApplyForJob } = require("../controllers/aplicationcontroller");
 const { requireAuth, requireAuthedit } = require("../middlewares/requiredauth");
 const upload = require("../multer/imgConfig.js");
 const checkProfileExists = require("../middlewares/checkProfileExists.js");
+const { uploadVideo, getVideosByUserId } = require("../controllers/Profilecontroller/video.controller.js");
 
 const router = express.Router();
 
 router.post("/register-user", UserRegistration);
+router.post('/upload-video', requireAuth, upload.single('video'), uploadVideo);
+router.get('/get-videos', requireAuth, getVideosByUserId);
 router.get("/get-all-users", Getallusers);
 router.get("/get-info-byid", requireAuth, GetUserById);
 router.put(

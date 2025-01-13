@@ -81,14 +81,7 @@ const Navbar = () => {
 
           {/* Desktop Nav Items */}
           <div className="hidden md:flex space-x-4">
-            {role === "User" && (
-              <Link
-                to="/new-profile"
-                className="px-4 py-2 text-black transition duration-300 ease-in-out"
-              >
-                Profile
-              </Link>
-            )}
+           
 
             {role === "company" && (
               <>

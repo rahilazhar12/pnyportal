@@ -300,7 +300,7 @@ const Projects = () => {
             </div>
 
             {/* Association */}
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="block text-sm font-medium mb-2">
                 Associated With
               </label>
@@ -317,7 +317,7 @@ const Projects = () => {
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
 
             {/* Description */}
             <div className="mb-6">
