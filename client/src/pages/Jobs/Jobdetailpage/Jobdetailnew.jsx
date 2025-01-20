@@ -129,12 +129,12 @@ const JobPage = () => {
               {jobData.experienceLevel}
             </span>
             <div className="flex items-center space-x-4">
-              <button className="p-2 border border-blue-500 rounded-full hover:bg-blue-200">
+              {/* <button className="p-2 border border-blue-500 rounded-full hover:bg-blue-200">
                 <FiHeart className="w-5 h-5 text-blue-500" />
-              </button>
+              </button> */}
               <button
                 onClick={applyForJob}
-                className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 space-x-2"
+                className="flex items-center bg-blue-500 text-white px-4 py-2 mt-3 rounded hover:bg-blue-600 space-x-2"
               >
                 <FiSend className="w-5 h-5 rotate-45" />
                 <span>Apply Now</span>
@@ -243,8 +243,7 @@ const JobPage = () => {
             <div>
               <h2 className="text-xl font-semibold mb-2">About Company</h2>
               <p className="text-gray-700">
-                Azadee by Rozee is a digital solutions company focusing on
-                innovative mobile and web applications.
+              {jobData.about || "Company information is not available."}
               </p>
             </div>
           )}

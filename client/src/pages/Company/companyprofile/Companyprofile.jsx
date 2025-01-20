@@ -162,7 +162,7 @@ const CompanyProfile = () => {
   }
 
   return (
-    <Container sx={{ py: 5 }}>
+    <Container sx={{ py: 5 }} maxWidth='xl'>
       <Typography
         variant="h3"
         component="h1"
@@ -180,7 +180,6 @@ const CompanyProfile = () => {
           <Table aria-label="jobs table">
             <TableHead>
               <TableRow>
-                <TableCell>Logo</TableCell>
                 <TableCell>Job Title</TableCell>
                 <TableCell>Company Name</TableCell>
                 <TableCell>Location</TableCell>
@@ -192,15 +191,8 @@ const CompanyProfile = () => {
             <TableBody>
               {jobs.map((job) => (
                 <TableRow key={job._id}>
-                  <TableCell>
-                    <img
-                      src={`${import.meta.env.VITE_API_URL}/uploads/${
-                        job.companyLogo
-                      }`}
-                      alt={`${job.companyName} Logo`}
-                      style={{ width: 50, height: 50, objectFit: "contain" }}
-                    />
-                  </TableCell>
+                  
+                 
                   <TableCell>{job.jobTitle}</TableCell>
                   <TableCell>{job.companyName}</TableCell>
                   <TableCell>{job.jobLocation}</TableCell>
@@ -208,7 +200,7 @@ const CompanyProfile = () => {
                     {job.minPrice} - {job.maxPrice} {job.salaryType}
                   </TableCell>
                   <TableCell>{job.experienceLevel}</TableCell>
-                  <TableCell align="center">
+                  <TableCell align="center" sx={{ p: 0}}>
                     <Button
                       onClick={() => handleEdit(job)}
                       size="small"

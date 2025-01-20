@@ -29,22 +29,67 @@ exports.getApplicationsForJob = async (req, res) => {
 };
 
 
+// exports.getJobsList = async (req, res) => {
+//   const { id } = req.params;
+
+//   try {
+//     if (id) {
+//       const job = await Jobs.findById(id);
+//       if (!job) {
+//         return res.status(404).json({ success: false, message: "Job not found" });
+//       }
+//       return res.status(200).json({ success: true, job: [job] }); // Wrap in array to keep response consistent
+//     }
+
+//     const jobs = await Jobs.find();
+//     return res.status(200).json(jobs); // Ensure jobs is always an array
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ success: false, message: "Error fetching jobs", error });
+//   }
+// };
+
 exports.getJobsList = async (req, res) => {
   const { id } = req.params;
 
   try {
     if (id) {
-      const job = await Jobs.findById(id);
+      // Fetch a single job by ID and populate the about field from the company
+      const job = await Jobs.findById(id).populate({
+        path: 'companyId', // Populate the companyId reference
+        select: 'about', // Include only the about field
+      });
+
       if (!job) {
         return res.status(404).json({ success: false, message: "Job not found" });
       }
-      return res.status(200).json({ success: true, job: [job] }); // Wrap in array to keep response consistent
+
+      return res.status(200).json({
+        success: true,
+        job: [
+          {
+            ...job._doc, // Spread job details
+            about: job.companyId?.about, // Include the about field at the top level
+          },
+        ],
+      });
     }
 
-    const jobs = await Jobs.find();
-    return res.status(200).json(jobs); // Ensure jobs is always an array
+    // Fetch all jobs and populate the about field for each job
+    const jobs = await Jobs.find().populate({
+      path: 'companyId', // Populate the companyId reference
+      select: 'about', // Include only the about field
+    });
+
+    // Transform the jobs to include about at the top level
+    const jobsWithAbout = jobs.map(job => ({
+      ...job._doc, // Spread job details
+      about: job.companyId?.about, // Include the about field at the top level
+    }));
+
+    return res.status(200).json(jobsWithAbout); // Ensure jobs is always an array
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({ success: false, message: "Error fetching jobs", error });
   }
 };

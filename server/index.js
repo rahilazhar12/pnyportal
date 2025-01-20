@@ -53,7 +53,7 @@ dotenv.config();
 // datbase conection
 dbConnection();
 
-app.use(express.json({ limit: '50mb' })); // Increase limit to 50MB
+app.use(express.json({ limit: "50mb" })); // Increase limit to 50MB
 app.use(cookieParser());
 
 app.use("/uploads", express.static("./uploads"));
@@ -83,7 +83,7 @@ app.use("/api/v1/jobs", jobsRouterCollection);
 app.use("/api/v1/users", userrouter);
 app.use("/api/v1/company", companyrouter);
 app.use("/api/v1/members", memberrouter);
-app.use("/api/v1/reset" , passresetrouter)
+app.use("/api/v1/reset", passresetrouter);
 app.use("/api/v1/profile", profile);
 
 const port = process.env.PORT || 5000;

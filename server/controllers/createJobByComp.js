@@ -90,14 +90,39 @@ exports.createNewJob = async (req, res) => {
   }
 };
 
+// exports.Getjobsbycategories = async (req, res) => {
+//   try {
+//     const jobs = await Jobs.find({ category: req.params.category });
+//     res.status(200).send(jobs);
+//   } catch (error) {
+//     res.status(500).send({ message: "Error fetching jobs", error });
+//   }
+// }
+
 exports.Getjobsbycategories = async (req, res) => {
   try {
-    const jobs = await Jobs.find({ category: req.params.category });
-    res.status(200).send(jobs);
+    // Fetch jobs by category and populate the `about` field from the associated company
+    const jobs = await Jobs.find({ category: req.params.category })
+      .populate({
+        path: 'companyId', // Refers to the companyId field in the jobs schema
+        select: 'about', // Fetch only the `about` field from the company
+      });
+
+    // Transform the response to include `about` at the top level
+    const jobsWithAbout = jobs.map(job => {
+      return {
+        ...job._doc, // Spread job details
+        about: job.companyId?.about, // Add the about field from the populated company
+      };
+    });
+
+    res.status(200).send(jobsWithAbout);
   } catch (error) {
     res.status(500).send({ message: "Error fetching jobs", error });
   }
-}
+};
+
+
 
 
 exports.GetjobsbycompanyId = async (req, res) => {

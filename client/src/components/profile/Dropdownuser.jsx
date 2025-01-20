@@ -75,6 +75,8 @@ const DropdownUser = () => {
                 to={
                   user?.role === "admin"
                     ? "/admin-dashboard/admin-profile"
+                    : user?.role === "company"
+                    ? "company-profile"
                     : "/settings"
                 }
                 className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
@@ -96,9 +98,10 @@ const DropdownUser = () => {
                     fill=""
                   />
                 </svg>
-                My Profile
+                {user.role === 'company' ? 'Company Profile' : 'My Profile'}
               </Link>
             </li>
+
             <li>
               <Link
                 to={

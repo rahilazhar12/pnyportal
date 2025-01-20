@@ -96,6 +96,7 @@ const theme = createTheme({
 });
 
 const Postajob = () => {
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
   const [selectedOption, setSelectedOption] = useState([]);
   const [formData, setFormData] = useState({
     jobTitle: "",
@@ -172,6 +173,7 @@ const Postajob = () => {
             category: "", // Reset category on success
           });
           setSelectedOption([]);
+          setFileInputKey(Date.now()); // Force file input to reset
         } else {
           setAlert({
             open: true,
@@ -228,7 +230,6 @@ const Postajob = () => {
     }),
   };
 
- 
   return (
     <ThemeProvider theme={theme}>
       <BackgroundContainer>
@@ -277,6 +278,7 @@ const Postajob = () => {
 
               <Grid item xs={12} sm={6}>
                 <TextField
+                  type="number"
                   required
                   fullWidth
                   label="Minimum Salary"
@@ -287,6 +289,7 @@ const Postajob = () => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  type="number"
                   required
                   fullWidth
                   label="Maximum Salary"
@@ -379,6 +382,7 @@ const Postajob = () => {
                   label="Company Logo"
                   name="companyLogo"
                   onChange={handleInputChange}
+                  key={fileInputKey}
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
