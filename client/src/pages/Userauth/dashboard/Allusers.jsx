@@ -2,12 +2,14 @@ import React, { useState, useEffect, startTransition } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import Loader from "../../../components/Loader/Loader";
 
-const Allusers = () => {
+const AllUsers = () => {
   const [companies, setCompanies] = useState([]);
   const [filteredCompanies, setFilteredCompanies] = useState([]);
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
 
   const fetchCompanies = async () => {
     try {
@@ -20,16 +22,15 @@ const Allusers = () => {
         setCompanies(data);
         setFilteredCompanies(data);
 
-        // Extract unique cities, normalized to lowercase
         const uniqueCities = [
           ...new Set(data.map((company) => company.city.toLowerCase())),
         ];
         setCities(uniqueCities);
-        setLoading(false); // Stop loading after data is set
+        setLoading(false);
       });
     } catch (error) {
       console.error("Error fetching companies:", error);
-      setLoading(false); // Stop loading even if there's an error
+      setLoading(false);
     }
   };
 
@@ -41,6 +42,7 @@ const Allusers = () => {
     const city = event.target.value.toLowerCase();
     startTransition(() => {
       setSelectedCity(city);
+      setCurrentPage(1); // Reset to the first page when filtering
       if (city === "") {
         setFilteredCompanies(companies);
       } else {
@@ -56,10 +58,20 @@ const Allusers = () => {
     return "+92" + number.replace(/^0/, "");
   };
 
+  // Pagination calculations
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = filteredCompanies.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredCompanies.length / usersPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className="container mx-auto p-4 bg-gray-100">
       {loading ? (
-        <Loader /> // Display loader when loading is true
+        <Loader />
       ) : (
         <>
           <h1 className="text-2xl font-bold mb-4 text-center bg-gray-200 p-3">
@@ -100,8 +112,8 @@ const Allusers = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredCompanies.length > 0 ? (
-                  filteredCompanies.map((user, index) => (
+                {currentUsers.length > 0 ? (
+                  currentUsers.map((user, index) => (
                     <tr key={index} className="hover:bg-gray-100">
                       <td className="px-4 py-2 border-b">{user.name}</td>
                       <td className="px-4 py-2 border-b">{user.email}</td>
@@ -127,7 +139,7 @@ const Allusers = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center px-4 py-2 border-b">
+                    <td colSpan="5" className="text-center px-4 py-2 border-b">
                       No Users found.
                     </td>
                   </tr>
@@ -135,10 +147,29 @@ const Allusers = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Controls */}
+          <div className="flex justify-center mt-4">
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+              (pageNumber) => (
+                <button
+                  key={pageNumber}
+                  onClick={() => handlePageChange(pageNumber)}
+                  className={`mx-1 px-3 py-1 border rounded ${
+                      currentPage === pageNumber
+                        ? "bg-blue-500 text-white"
+                        : "bg-white text-blue-500 border-blue-500"
+                    } hover:bg-blue-600 hover:text-white`}
+                >
+                  {pageNumber}
+                </button>
+              )
+            )}
+          </div>
         </>
       )}
     </div>
   );
 };
 
-export default Allusers;
+export default AllUsers;

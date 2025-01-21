@@ -1,15 +1,7 @@
 import React, { useState, useEffect, startTransition } from "react";
 import { FaFacebook, FaLinkedin, FaWhatsapp } from "react-icons/fa";
 import Loader from "../../../components/Loader/Loader";
-import {
-  Modal,
-  Box,
-  Typography,
-  IconButton,
-  Grid,
-  Divider,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+
 
 const AllCompanies = () => {
   const [companies, setCompanies] = useState([]);
@@ -19,6 +11,8 @@ const AllCompanies = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); // Pagination state
+  const companiesPerPage = 10; // Number of companies per page
 
   const fetchCompanies = async () => {
     try {
@@ -46,6 +40,22 @@ const AllCompanies = () => {
   useEffect(() => {
     fetchCompanies();
   }, []);
+
+  const handleCityChange = (event) => {
+    const city = event.target.value.toLowerCase();
+    startTransition(() => {
+      setSelectedCity(city);
+      setCurrentPage(1); // Reset to first page on city filter change
+      if (city === "") {
+        setFilteredCompanies(companies);
+      } else {
+        const filtered = companies.filter(
+          (company) => company.city.toLowerCase() === city
+        );
+        setFilteredCompanies(filtered);
+      }
+    });
+  };
 
   const handleApprovalChange = async (userid, isUserApproved) => {
     try {
@@ -80,21 +90,6 @@ const AllCompanies = () => {
     return "+92" + number.replace(/^0/, "");
   };
 
-  const handleCityChange = (event) => {
-    const city = event.target.value.toLowerCase();
-    startTransition(() => {
-      setSelectedCity(city);
-      if (city === "") {
-        setFilteredCompanies(companies);
-      } else {
-        const filtered = companies.filter(
-          (company) => company.city.toLowerCase() === city
-        );
-        setFilteredCompanies(filtered);
-      }
-    });
-  };
-
   const handleOpenModal = (company) => {
     setSelectedCompany(company);
     setOpenModal(true);
@@ -103,6 +98,41 @@ const AllCompanies = () => {
   const handleCloseModal = () => {
     setSelectedCompany(null);
     setOpenModal(false);
+  };
+
+  // Pagination logic
+  const indexOfLastCompany = currentPage * companiesPerPage;
+  const indexOfFirstCompany = indexOfLastCompany - companiesPerPage;
+  const currentCompanies = filteredCompanies.slice(
+    indexOfFirstCompany,
+    indexOfLastCompany
+  );
+
+  const totalPages = Math.ceil(filteredCompanies.length / companiesPerPage);
+
+  const renderPagination = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(i);
+    }
+
+    return (
+      <div className="flex justify-center items-center space-x-2 mt-4">
+        {pageNumbers.map((number) => (
+          <button
+            key={number}
+            onClick={() => setCurrentPage(number)}
+            className={`px-3 py-1 rounded ${
+              currentPage === number
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 hover:bg-blue-500 hover:text-white"
+            }`}
+          >
+            {number}
+          </button>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -150,8 +180,8 @@ const AllCompanies = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredCompanies.length > 0 ? (
-                  filteredCompanies.map((company, index) => (
+                {currentCompanies.length > 0 ? (
+                  currentCompanies.map((company, index) => (
                     <tr key={index} className="hover:bg-gray-100">
                       <td className="px-4 py-2 border-b">{company.name}</td>
                       <td className="px-4 py-2 border-b">
@@ -228,106 +258,7 @@ const AllCompanies = () => {
             </table>
           </div>
 
-          <Modal
-            open={openModal}
-            onClose={handleCloseModal}
-            aria-labelledby="company-details-modal"
-            aria-describedby="company-details-description"
-          >
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                width: "90%",
-                maxWidth: 600,
-                bgcolor: "background.paper",
-                boxShadow: 24,
-                p: 4,
-                borderRadius: 2,
-                outline: "none",
-              }}
-            >
-              <IconButton
-                onClick={handleCloseModal}
-                sx={{ position: "absolute", top: 8, right: 8 }}
-              >
-                <CloseIcon />
-              </IconButton>
-              <Typography id="company-details-modal" variant="h6" gutterBottom>
-                {selectedCompany?.name}
-              </Typography>
-              <Divider sx={{ mb: 2 }} />
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    NTN Number:
-                  </Typography>
-                  <Typography>{selectedCompany?.ntnnumber || "N/A"}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    Location:
-                  </Typography>
-                  <Typography>{selectedCompany?.city || "N/A"}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    Contact:
-                  </Typography>
-                  <Typography>
-                    {formatPhoneNumber(selectedCompany?.personincontact) ||
-                      "N/A"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    Approval Status:
-                  </Typography>
-                  <Typography>
-                    {selectedCompany?.isApproved ? "Approved" : "Not Approved"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    Social Links:
-                  </Typography>
-                  <Box display="flex" alignItems="center" gap={2}>
-                    {selectedCompany?.facebook && (
-                      <a
-                        href={selectedCompany.facebook}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <FaFacebook size={24} color="#4267B2" />
-                      </a>
-                    )}
-                    {selectedCompany?.linkedin && (
-                      <a
-                        href={selectedCompany.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <FaLinkedin size={24} color="#0077b5" />
-                      </a>
-                    )}
-                    {selectedCompany?.personincontact && (
-                      <a
-                        href={`https://wa.me/${formatPhoneNumber(
-                          selectedCompany.personincontact
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <FaWhatsapp size={24} color="#25D366" />
-                      </a>
-                    )}
-                  </Box>
-                </Grid>
-              </Grid>
-            </Box>
-          </Modal>
+          {renderPagination()}
         </>
       )}
     </div>

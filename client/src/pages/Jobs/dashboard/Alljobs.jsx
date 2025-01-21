@@ -4,6 +4,8 @@ import Loader from "../../../components/Loader/Loader";
 const AllJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 10;
 
   const fetchJobs = async () => {
     try {
@@ -25,6 +27,16 @@ const AllJobs = () => {
   useEffect(() => {
     fetchJobs();
   }, []);
+
+  // Pagination calculations
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
+  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="container mx-auto p-4 bg-gray-100">
@@ -48,8 +60,8 @@ const AllJobs = () => {
                 </tr>
               </thead>
               <tbody>
-                {jobs.length > 0 ? (
-                  jobs.map((job, index) => (
+                {currentJobs.length > 0 ? (
+                  currentJobs.map((job, index) => (
                     <tr key={index} className="hover:bg-gray-100">
                       <td className="px-4 py-2 border-b">{job.jobTitle}</td>
                       <td className="px-4 py-2 border-b">{job.postingDate}</td>
@@ -64,13 +76,32 @@ const AllJobs = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="3" className="text-center px-4 py-2 border-b">
+                    <td colSpan="5" className="text-center px-4 py-2 border-b">
                       No jobs found.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="flex justify-center mt-4">
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+              (pageNumber) => (
+                <button
+                  key={pageNumber}
+                  onClick={() => handlePageChange(pageNumber)}
+                  className={`mx-1 px-3 py-1 border rounded ${
+                      currentPage === pageNumber
+                        ? "bg-blue-500 text-white"
+                        : "bg-white text-blue-500 border-blue-500"
+                    } hover:bg-blue-600 hover:text-white`}
+                >
+                  {pageNumber}
+                </button>
+              )
+            )}
           </div>
         </>
       )}
