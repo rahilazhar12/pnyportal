@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import {
   FormControl,
   Select,
   MenuItem,
-  Grid,
   Typography,
   Button,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+
 import "../../../assets/css/style.css";
 
 const Joblistingnew = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
+
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [jobLocations, setJobLocations] = useState([]);
@@ -25,7 +25,10 @@ const Joblistingnew = () => {
     remote: false,
     freelance: false,
   });
-  
+
+  // --- PAGINATION STATE ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 20; // Show 20 jobs per page
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -37,6 +40,7 @@ const Joblistingnew = () => {
           const data = await response.json();
           setJobs(data);
           setFilteredJobs(data);
+
           const locations = Array.from(
             new Set(data.map((job) => job.jobLocation))
           );
@@ -50,50 +54,65 @@ const Joblistingnew = () => {
     };
 
     fetchJobs();
-    
   }, [slug]);
 
+  // Helper function to filter jobs
+  const filterJobs = (location, jobTypes) => {
+    let updated = [...jobs];
+
+    if (location) {
+      updated = updated.filter((job) => job.jobLocation === location);
+    }
+
+    if (jobTypes.fullTime) {
+      updated = updated.filter((job) => job.employmentType === "Full-time");
+    }
+    if (jobTypes.partTime) {
+      updated = updated.filter((job) => job.employmentType === "Part-time");
+    }
+    if (jobTypes.remote) {
+      updated = updated.filter((job) => job.employmentType === "Remote");
+    }
+    if (jobTypes.freelance) {
+      updated = updated.filter((job) => job.employmentType === "Freelance");
+    }
+
+    // Once we filter, set current page back to 1
+    setFilteredJobs(updated);
+    setCurrentPage(1);
+  };
+
+  // Location filter change
   const handleLocationChange = (event) => {
     const selected = event.target.value;
     setSelectedLocation(selected);
     filterJobs(selected, selectedJobTypes);
   };
 
+  // Job type checkbox change
   const handleJobTypeChange = (event) => {
     const { name, checked } = event.target;
-    setSelectedJobTypes((prev) => ({
-      ...prev,
-      [name]: checked,
-    }));
-    filterJobs(selectedLocation, { ...selectedJobTypes, [name]: checked });
+    const updatedJobTypes = { ...selectedJobTypes, [name]: checked };
+    setSelectedJobTypes(updatedJobTypes);
+    filterJobs(selectedLocation, updatedJobTypes);
   };
 
-  const filterJobs = (location, jobTypes) => {
-    let filtered = jobs;
-
-    if (location) {
-      filtered = filtered.filter((job) => job.jobLocation === location);
-    }
-
-    if (jobTypes.fullTime) {
-      filtered = filtered.filter((job) => job.employmentType === "Full-time");
-    }
-    if (jobTypes.partTime) {
-      filtered = filtered.filter((job) => job.employmentType === "Part-time");
-    }
-    if (jobTypes.remote) {
-      filtered = filtered.filter((job) => job.employmentType === "Remote");
-    }
-    if (jobTypes.freelance) {
-      filtered = filtered.filter((job) => job.employmentType === "Freelance");
-    }
-
-    setFilteredJobs(filtered);
-  };
-
-
+  // Apply / see details
   const applyForJob = async (jobId) => {
     navigate(`/job_details/${jobId}`);
+  };
+
+  // --- CALCULATE DISPLAYED JOBS (pagination) ---
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const displayedJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+
+  // --- TOTAL PAGES ---
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+
+  // --- HANDLE PAGE CHANGE ---
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -103,13 +122,12 @@ const Joblistingnew = () => {
         <div className="job-listing-area pt-30 pb-30">
           <div className="container mx-auto">
             <div className="flex flex-wrap">
-              {/* Left content */}
+              {/* Left content (Filters) */}
               <div className="w-full xl:w-1/4 lg:w-1/4 md:w-1/3">
                 <div className="flex flex-col">
                   <div className="w-full">
                     <div className="small-section-tittle2 mb-12">
                       <div className="ion">
-                        {" "}
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -131,11 +149,8 @@ const Joblistingnew = () => {
                 <div className="job-category-listing mb-12">
                   {/* single one */}
                   <div className="single-listing">
-                    {/* Select job items start */}
-
-                    {/*  Select job items End*/}
-                    {/* select-Categories start */}
-                    <div className="select-Categories  ">
+                    {/* Filter by Job Type */}
+                    <div className="select-Categories">
                       <div className="small-section-tittle2 pb-10">
                         <h4>Job Type</h4>
                       </div>
@@ -156,7 +171,6 @@ const Joblistingnew = () => {
                           name="partTime"
                           checked={selectedJobTypes.partTime}
                           onChange={handleJobTypeChange}
-                          defaultChecked="checked active"
                         />
                         <span className="checkmark" />
                       </label>
@@ -181,7 +195,6 @@ const Joblistingnew = () => {
                         <span className="checkmark" />
                       </label>
                     </div>
-                    {/* select-Categories End */}
                   </div>
                   {/* single two */}
                   <div className="single-listing">
@@ -197,6 +210,7 @@ const Joblistingnew = () => {
                         <MenuItem value="" disabled>
                           Select Location
                         </MenuItem>
+                        {/* Option to clear location filter */}
                         <MenuItem value="">Anywhere</MenuItem>
                         {jobLocations.map((location) => (
                           <MenuItem key={location} value={location}>
@@ -205,17 +219,13 @@ const Joblistingnew = () => {
                         ))}
                       </Select>
                     </FormControl>
-                    {/*  Select job items End*/}
-
-                    {/* select-Categories End */}
                   </div>
-                  {/* single three */}
                 </div>
                 {/* Job Category Listing End */}
               </div>
-              {/* Right content */}
+
+              {/* Right content (Jobs) */}
               <div className="w-full xl:w-3/4 lg:w-3/4 md:w-2/3">
-                {/* Featured_job_start */}
                 <section className="featured-job-area">
                   <div className="container mx-auto">
                     {/* Count of Job list Start */}
@@ -230,9 +240,10 @@ const Joblistingnew = () => {
                       </div>
                     </div>
                     {/* Count of Job list End */}
-                    {/* single-job-content */}
-                    {filteredJobs.length > 0 ? (
-                      filteredJobs.map((job) => (
+
+                    {/* Single-job-content (use displayedJobs) */}
+                    {displayedJobs.length > 0 ? (
+                      displayedJobs.map((job) => (
                         <div className="single-job-items mb-8" key={job._id}>
                           <div className="job-items">
                             <div className="company-img">
@@ -276,7 +287,7 @@ const Joblistingnew = () => {
                                 fontSize: "12px",
                                 textTransform: "none",
                               }}
-                              onClick={() => applyForJob(job._id)} // Trigger the apply function on button click
+                              onClick={() => applyForJob(job._id)}
                             >
                               Details
                             </Button>
@@ -284,53 +295,72 @@ const Joblistingnew = () => {
                         </div>
                       ))
                     ) : (
-                      <div variant="body1">No jobs found</div>
+                      <div>No jobs found</div>
                     )}
-
-                    {/* Repeat similar sections for other job listings */}
                   </div>
                 </section>
-                {/* Featured_job_end */}
               </div>
             </div>
           </div>
         </div>
         {/* Job List Area End */}
+
         {/* Pagination Start */}
-        {/* <div className="pagination-area pb-12 text-center">
-          <div className="container mx-auto">
-            <div className="row">
-              <div className="w-full">
-                <div className="single-wrap flex justify-center">
-                  <nav aria-label="Page navigation example">
-                    <ul className="pagination flex justify-start">
-                      <li className="page-item active">
-                        <a className="page-link" href="#">
-                          01
+        {totalPages > 1 && (
+          <div className="pagination-area pb-12 text-center">
+            <div className="container mx-auto">
+              <div className="single-wrap flex justify-center">
+                <nav aria-label="Page navigation example">
+                  <ul className="pagination flex">
+                    {/* Previous Button */}
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <a
+                        className="page-link"
+                        href="#!"
+                        onClick={() =>
+                          currentPage > 1 && handlePageChange(currentPage - 1)
+                        }
+                      >
+                        <span className="ti-angle-left" />
+                      </a>
+                    </li>
+
+                    {/* Page Numbers */}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <li
+                        key={page}
+                        className={`page-item ${page === currentPage ? "active" : ""}`}
+                      >
+                        <a
+                          className="page-link"
+                          href="#!"
+                          onClick={() => handlePageChange(page)}
+                        >
+                          {page < 10 ? `0${page}` : page}
                         </a>
                       </li>
-                      <li className="page-item">
-                        <a className="page-link" href="#">
-                          02
-                        </a>
-                      </li>
-                      <li className="page-item">
-                        <a className="page-link" href="#">
-                          03
-                        </a>
-                      </li>
-                      <li className="page-item">
-                        <a className="page-link" href="#">
-                          <span className="ti-angle-right" />
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
-                </div>
+                    ))}
+
+                    {/* Next Button */}
+                    <li
+                      className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+                    >
+                      <a
+                        className="page-link"
+                        href="#!"
+                        onClick={() =>
+                          currentPage < totalPages && handlePageChange(currentPage + 1)
+                        }
+                      >
+                        <span className="ti-angle-right" />
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             </div>
           </div>
-        </div> */}
+        )}
         {/* Pagination End */}
       </div>
     </>

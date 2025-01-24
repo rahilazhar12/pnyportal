@@ -2,7 +2,6 @@ import React, { useState, useEffect, startTransition } from "react";
 import { FaFacebook, FaLinkedin, FaWhatsapp } from "react-icons/fa";
 import Loader from "../../../components/Loader/Loader";
 
-
 const AllCompanies = () => {
   const [companies, setCompanies] = useState([]);
   const [filteredCompanies, setFilteredCompanies] = useState([]);
@@ -60,9 +59,7 @@ const AllCompanies = () => {
   const handleApprovalChange = async (userid, isUserApproved) => {
     try {
       const response = await fetch(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/v1/company/approve-company/${userid}`,
+        `${import.meta.env.VITE_API_URL}/api/v1/company/approve-company/${userid}`,
         {
           method: "PUT",
           headers: {
@@ -259,6 +256,42 @@ const AllCompanies = () => {
           </div>
 
           {renderPagination()}
+
+          {/* MODAL FOR COMPANY DETAILS */}
+          {openModal && selectedCompany && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              {/* Modal content container */}
+              <div className="bg-white w-11/12 md:w-1/2 lg:w-1/3 p-6 rounded shadow-lg relative">
+                {/* Close button */}
+                <button
+                  onClick={handleCloseModal}
+                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+                >
+                  ✕
+                </button>
+                <h2 className="text-2xl font-bold mb-4">Company Details</h2>
+                <div className="space-y-2">
+                  <p>
+                    <strong>Name:</strong> {selectedCompany.name}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {selectedCompany.email}
+                  </p>
+                  <p>
+                    <strong>NTN Number:</strong> {selectedCompany.ntnnumber}
+                  </p>
+                  <p>
+                    <strong>City:</strong> {selectedCompany.city}
+                  </p>
+                  <p>
+                    <strong>Contact Person:</strong>{" "}
+                    {selectedCompany.personincontact}
+                  </p>
+                  {/* Add more fields as needed */}
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
