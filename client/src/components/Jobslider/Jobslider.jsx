@@ -10,7 +10,9 @@ function Jobslider() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/v1/jobs/getjobs");
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/v1/jobs/getjobs`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch jobs");
         }
@@ -24,7 +26,7 @@ function Jobslider() {
     fetchJobs();
   }, []);
 
-  console.log(jobs)
+  console.log(jobs);
 
   const settings = {
     dots: false,
