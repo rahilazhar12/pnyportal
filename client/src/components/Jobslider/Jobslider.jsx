@@ -1,16 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 function Jobslider() {
-  const data = [
-    { id: 1, name: "Ali" },
-    { id: 2, name: "Ali" },
-    { id: 3, name: "Ali" },
-    { id: 4, name: "Ali" },
-  ];
-  var settings = {
+  const [jobs, setJobs] = useState([]);
+
+  // Fetch jobs from API
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/v1/jobs/getjobs");
+        if (!response.ok) {
+          throw new Error("Failed to fetch jobs");
+        }
+        const data = await response.json();
+        setJobs(data); // Assuming the API response contains a "jobs" array
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  console.log(jobs)
+
+  const settings = {
     dots: false,
     slidesToShow: 4,
     slidesToScroll: 1,
@@ -48,36 +64,30 @@ function Jobslider() {
       },
     ],
   };
+
   return (
     <div className="slider-container px-4 py-2">
       <div className="flex p-4 justify-center font-bold text-2xl">
         <h1>Recommended Jobs</h1>
       </div>
       <Slider {...settings}>
-        {data.map((data, i) => (
-          <div key={i} className="px-2">
-            {" "}
-            {/* Added px-2 to create horizontal padding */}
+        {jobs.map((job) => (
+          <div key={job._id} className="px-2">
             <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-              {/* <a href="#">
-                <img
-                  className="rounded-t-lg w-32"
-                  src="https://www.pnytrainings.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FPNY%20Trainings%20logo.68824f43.png&w=1080&q=75"
-                  alt="Noteworthy technology"
-                />
-              </a> */}
               <div className="p-5">
                 <a href="#">
                   <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                    Noteworthy technology acquisitions 2021
+                    {job.jobTitle}
                   </h5>
                 </a>
                 <p className="mb-3 text-green-700 font-semibold dark:text-gray-400">
-                  PKR 15,000/month
+                  {job.jobLocation}
+                </p>
+                <p className="mb-3 text-green-700 font-semibold dark:text-gray-400">
+                  {job.experienceLevel}
                 </p>
                 <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                  Here are the biggest enterprise technology acquisitions of
-                  2021 so far, in reverse chronological order.
+                  {job.postingDate}
                 </p>
                 <a
                   href="#"

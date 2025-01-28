@@ -15,7 +15,7 @@ const Footer = () => {
       {/* Overlay for background image with reduced opacity */}
       <div className="absolute inset-0 bg-black opacity-60"></div>
 
-      <div className="relative z-10 container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl p-4">
+      <div className="relative z-10 container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl p-4">
         {/* About Us */}
         <div>
           <h4 className="text-xl text-white font-semibold mb-4">About Us</h4>
@@ -41,23 +41,7 @@ const Footer = () => {
         </div>
 
         {/* Important Links */}
-        <div>
-          <h4 className="text-xl text-white font-semibold mb-4">
-            Important Links
-          </h4>
-          <ul className="text-white space-y-2">
-            <li>
-              <Link to="/about-us" className="hover:text-white">
-                About-Us
-              </Link>
-            </li>
-            <li>
-              <Link to="/contact-us" className="hover:text-white">
-                Contact Us
-              </Link>
-            </li>
-          </ul>
-        </div>
+      
 
         {/* Social Media Icons */}
         <div>
