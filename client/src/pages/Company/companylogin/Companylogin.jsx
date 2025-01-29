@@ -66,13 +66,38 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const CompanyLogin = () => {
   const navigate = useNavigate();
+
+  // Login states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [alert, setAlert] = useState({ severity: "", message: "", open: false });
+  const [alert, setAlert] = useState({
+    severity: "",
+    message: "",
+    open: false,
+  });
   const [loading, setLoading] = useState(false);
+
+  // Verification modal states
   const [verificationModal, setVerificationModal] = useState(false);
-  const [verificationCode, setVerificationCode] = useState(["", "", "", "", "", ""]);
+  const [verificationCode, setVerificationCode] = useState([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
   const [isCodeValid, setIsCodeValid] = useState(null); // null: no check, true: valid, false: invalid
+
+  // Forgot password / OTP states
+  const [forgotPasswordModal, setForgotPasswordModal] = useState(false);
+  const [otpModal, setOtpModal] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+
+  // Loading states for forgot password and OTP reset (to show spinners)
+  const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
+  const [otpResetLoading, setOtpResetLoading] = useState(false);
 
   const loginCompany = async () => {
     try {
@@ -99,7 +124,11 @@ const CompanyLogin = () => {
         localStorage.setItem("Data", encryptedData);
         navigate("/");
         window.location.reload();
-        setAlert({ severity: "success", message: "Login successful!", open: true });
+        setAlert({
+          severity: "success",
+          message: "Login successful!",
+          open: true,
+        });
       } else {
         setAlert({ severity: "error", message: data.message, open: true });
       }
@@ -142,7 +171,10 @@ const CompanyLogin = () => {
         navigate("/");
         window.location.reload();
         setAlert({ severity: "success", message: data.message, open: true });
-      } else if (data.message === "Account not verified. A new verification code has been sent to your email.") {
+      } else if (
+        data.message ===
+        "Account not verified. A new verification code has been sent to your email."
+      ) {
         setAlert({ severity: "warning", message: data.message, open: true });
         setTimeout(() => {
           setVerificationModal(true);
@@ -191,8 +223,12 @@ const CompanyLogin = () => {
         setIsCodeValid(true);
         await new Promise((resolve) => setTimeout(resolve, 1000));
         setVerificationModal(false);
-        setAlert({ severity: "success", message: "Account verified successfully! Logging in...", open: true });
-        
+        setAlert({
+          severity: "success",
+          message: "Account verified successfully! Logging in...",
+          open: true,
+        });
+
         setTimeout(loginCompany, 1000);
       } else {
         setIsCodeValid(false);
@@ -221,18 +257,89 @@ const CompanyLogin = () => {
     setAlert({ ...alert, open: false });
   };
 
+  // Forgot Password Flow
+  const requestPasswordReset = async () => {
+    // Show loading spinner for forgot password
+    setForgotPasswordLoading(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/v1/reset/reset-password-company`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        setForgotPasswordModal(false);
+        setOtpModal(true);
+        setAlert({
+          severity: "success",
+          message: "OTP sent to email",
+          open: true,
+        });
+      } else {
+        setAlert({ severity: "error", message: data.message, open: true });
+      }
+    } catch (error) {
+      setAlert({
+        severity: "error",
+        message: "Error in connection",
+        open: true,
+      });
+    } finally {
+      setForgotPasswordLoading(false);
+    }
+  };
+
+  const verifyOtpAndResetPassword = async () => {
+    // Show loading spinner for OTP reset
+    setOtpResetLoading(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/v1/reset/verify-otp-company`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, otp, password: newPassword }),
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        setOtpModal(false);
+        setAlert({
+          severity: "success",
+          message: "Password reset successfully",
+          open: true,
+        });
+      } else {
+        setAlert({ severity: "error", message: data.message, open: true });
+      }
+    } catch (error) {
+      setAlert({
+        severity: "error",
+        message: "Error in connection",
+        open: true,
+      });
+    } finally {
+      setOtpResetLoading(false);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <StyledBox>
         <Container component="main" maxWidth="xs">
           {alert.open && (
-            <StyledAlert
-              severity={alert.severity}
-              onClose={handleToastClose}
-            >
+            <StyledAlert severity={alert.severity} onClose={handleToastClose}>
               <AlertTitle>
-                {alert.severity === "success" ? "Success" : alert.severity === "error" ? "Error" : "Warning"}
+                {alert.severity === "success"
+                  ? "Success"
+                  : alert.severity === "error"
+                  ? "Error"
+                  : "Warning"}
               </AlertTitle>
               {alert.message}
             </StyledAlert>
@@ -278,6 +385,14 @@ const CompanyLogin = () => {
               >
                 {loading ? <CircularProgress size={24} /> : "Sign In"}
               </Button>
+              <Button
+                fullWidth
+                color="secondary"
+                sx={{ mt: 1 }}
+                onClick={() => setForgotPasswordModal(true)}
+              >
+                Forgot Password?
+              </Button>
             </form>
           </FormBox>
         </Container>
@@ -301,14 +416,20 @@ const CompanyLogin = () => {
                   type="text"
                   maxLength="1"
                   value={digit}
-                  onChange={(e) => handleVerificationCodeChange(index, e.target.value)}
+                  onChange={(e) =>
+                    handleVerificationCodeChange(index, e.target.value)
+                  }
                   style={{
                     width: "40px",
                     height: "40px",
                     textAlign: "center",
                     fontSize: "1.5rem",
                     border: `2px solid ${
-                      isCodeValid === true ? "green" : isCodeValid === false ? "red" : "#e0e0e0"
+                      isCodeValid === true
+                        ? "green"
+                        : isCodeValid === false
+                        ? "red"
+                        : "#e0e0e0"
                     }`,
                     borderRadius: "5px",
                     transition: "border-color 0.3s ease",
@@ -320,6 +441,80 @@ const CompanyLogin = () => {
           <DialogActions>
             <Button onClick={handleClearCode} color="secondary">
               Clear
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Forgot Password Modal */}
+        <Dialog
+          open={forgotPasswordModal}
+          TransitionComponent={Transition}
+          fullWidth
+          maxWidth="xs"
+        >
+          <DialogTitle>Reset Password</DialogTitle>
+          <DialogContent>
+            <TextField
+              label="Email"
+              fullWidth
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setForgotPasswordModal(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={requestPasswordReset}
+              color="primary"
+              disabled={forgotPasswordLoading}
+            >
+              {forgotPasswordLoading ? (
+                <CircularProgress size={24} />
+              ) : (
+                "Send OTP"
+              )}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* OTP and New Password Modal */}
+        <Dialog
+          open={otpModal}
+          TransitionComponent={Transition}
+          fullWidth
+          maxWidth="xs"
+        >
+          <DialogTitle>Enter OTP & New Password</DialogTitle>
+          <DialogContent>
+            <TextField
+              label="OTP"
+              fullWidth
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="New Password"
+              type="password"
+              fullWidth
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOtpModal(false)}>Cancel</Button>
+            <Button
+              onClick={verifyOtpAndResetPassword}
+              color="primary"
+              disabled={otpResetLoading}
+            >
+              {otpResetLoading ? (
+                <CircularProgress size={24} />
+              ) : (
+                "Reset Password"
+              )}
             </Button>
           </DialogActions>
         </Dialog>
