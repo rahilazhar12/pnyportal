@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useNavigate } from "react-router-dom";
 
 function Jobslider() {
   const [jobs, setJobs] = useState([]);
-
+const navigate = useNavigate();
   // Fetch jobs from API
   useEffect(() => {
     const fetchJobs = async () => {
@@ -67,6 +68,11 @@ function Jobslider() {
     ],
   };
 
+  const applyForJob = (job) => {
+    const jobTitleWithoutSpaces = job.jobTitle.replace(/\s+/g, ""); // Remove spaces
+    const jobIdLastTwoDigits = job._id.slice(-5); // Get last two digits of _id
+    navigate(`/job_details/${jobTitleWithoutSpaces}-${jobIdLastTwoDigits}`, { state: { job } }); // Pass job data via state
+  };
   return (
     <div className="slider-container px-4 py-2">
       <div className="flex p-4 justify-center font-bold text-2xl">
@@ -91,8 +97,8 @@ function Jobslider() {
                 <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                   {job.postingDate}
                 </p>
-                <a
-                  href={`/job_details/${job._id}`}
+                <button
+                  onClick={() => applyForJob(job)}
                   className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
                   Read more
@@ -111,7 +117,7 @@ function Jobslider() {
                       d="M1 5h12m0 0L9 1m4 4L9 9"
                     />
                   </svg>
-                </a>
+                </button>
               </div>
             </div>
           </div>

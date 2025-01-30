@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 import {
   FormControl,
   Select,
@@ -103,8 +103,11 @@ const Joblistingnew = () => {
   // };
 
   const applyForJob = (job) => {
-    navigate("/job_details", { state: { job } }); // Pass job data via state
+    const jobTitleWithoutSpaces = job.jobTitle.replace(/\s+/g, ""); // Remove spaces
+    const jobIdLastTwoDigits = job._id.slice(-5); // Get last two digits of _id
+    navigate(`/job_details/${jobTitleWithoutSpaces}-${jobIdLastTwoDigits}`, { state: { job } }); // Pass job data via state
   };
+  
 
   // --- CALCULATE DISPLAYED JOBS (pagination) ---
   const indexOfLastJob = currentPage * jobsPerPage;
@@ -248,10 +251,10 @@ const Joblistingnew = () => {
                     {/* Single-job-content (use displayedJobs) */}
                     {displayedJobs.length > 0 ? (
                       displayedJobs.map((job) => (
-                        <div className="single-job-items mb-8" key={job._id}>
+                        <div className="single-job-items mb-8 " key={job._id} >
                           <div className="job-items">
                             <div className="company-img">
-                              <a href="#">
+                              <button>
                                 <img
                                   className="border"
                                   src={`${
@@ -264,12 +267,12 @@ const Joblistingnew = () => {
                                     objectFit: "contain",
                                   }}
                                 />
-                              </a>
+                              </button>
                             </div>
                             <div className="job-tittle job-tittle2">
-                              <a href="#">
+                              <button onClick={() => applyForJob(job)}>
                                 <h4>{job.jobTitle}</h4>
-                              </a>
+                              </button>
                               <ul className="list-none">
                                 <li>{job.companyName}</li>
                                 <li>
@@ -277,7 +280,10 @@ const Joblistingnew = () => {
                                   {job.jobLocation}
                                 </li>
                                 <li>{job.maxPrice}</li>
+                                <div>{job.description.split(" ").slice(0, 14).join(" ")}...</div>
                               </ul>
+                              
+
                             </div>
                           </div>
                           <div className="items-link items-link2 float-right">
@@ -317,7 +323,11 @@ const Joblistingnew = () => {
                 <nav aria-label="Page navigation example">
                   <ul className="pagination flex">
                     {/* Previous Button */}
-                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                    <li
+                      className={`page-item ${
+                        currentPage === 1 ? "disabled" : ""
+                      }`}
+                    >
                       <a
                         className="page-link"
                         href="#!"
@@ -330,30 +340,37 @@ const Joblistingnew = () => {
                     </li>
 
                     {/* Page Numbers */}
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <li
-                        key={page}
-                        className={`page-item ${page === currentPage ? "active" : ""}`}
-                      >
-                        <a
-                          className="page-link"
-                          href="#!"
-                          onClick={() => handlePageChange(page)}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (page) => (
+                        <li
+                          key={page}
+                          className={`page-item ${
+                            page === currentPage ? "active" : ""
+                          }`}
                         >
-                          {page < 10 ? `0${page}` : page}
-                        </a>
-                      </li>
-                    ))}
+                          <a
+                            className="page-link"
+                            href="#!"
+                            onClick={() => handlePageChange(page)}
+                          >
+                            {page < 10 ? `0${page}` : page}
+                          </a>
+                        </li>
+                      )
+                    )}
 
                     {/* Next Button */}
                     <li
-                      className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+                      className={`page-item ${
+                        currentPage === totalPages ? "disabled" : ""
+                      }`}
                     >
                       <a
                         className="page-link"
                         href="#!"
                         onClick={() =>
-                          currentPage < totalPages && handlePageChange(currentPage + 1)
+                          currentPage < totalPages &&
+                          handlePageChange(currentPage + 1)
                         }
                       >
                         <span className="ti-angle-right" />
