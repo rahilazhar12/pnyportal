@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ReactQuill from "react-quill";
 
 const CompanySettings = () => {
   const [company, setCompany] = useState(null);
@@ -62,6 +63,10 @@ const CompanySettings = () => {
           text: "An error occurred while updating the profile.",
         });
       });
+  };
+
+  const handleQuillChange = (value) => {
+    setFormData((prev) => ({ ...prev, about: value }));
   };
 
   return (
@@ -160,9 +165,14 @@ const CompanySettings = () => {
                 </p>
               </div>
               <div className="col-span-2 text-justify">
-                <p className="text-xl text-black font-medium text-center">About</p>
-                <p className="text-base font-semibold text-gray-800">
-                  {company.about}
+                <p className="text-xl text-black font-medium text-center">
+                  About
+                </p>
+                <p className="text-gray-700 font-semibold text-sm"
+                dangerouslySetInnerHTML={{
+                  __html: company.about
+                }}>
+                  
                 </p>
               </div>
             </div>
@@ -233,21 +243,19 @@ const CompanySettings = () => {
                 </div>
 
                 {/* Separate About Section */}
-                <div className="mt-6 w-full">
+                {/* React Quill Editor */}
+                <div className="mt-6">
                   <label className="text-sm font-medium text-gray-600">
                     About
                   </label>
-                  <textarea
-                    name="about"
+                  <ReactQuill
                     value={formData.about || ""}
-                    onChange={handleChange}
-                    placeholder="Enter About Section"
-                    className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    rows="5"
-                  ></textarea>
+                    onChange={handleQuillChange}
+                    className="h-52"
+                  />
                 </div>
 
-                <div className="mt-6 flex justify-end gap-4">
+                <div className="mt-12 flex justify-end gap-4">
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}

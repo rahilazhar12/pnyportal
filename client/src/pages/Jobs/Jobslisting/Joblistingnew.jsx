@@ -98,8 +98,12 @@ const Joblistingnew = () => {
   };
 
   // Apply / see details
-  const applyForJob = async (jobId) => {
-    navigate(`/job_details/${jobId}`);
+  // const applyForJob = async (jobId) => {
+  //   navigate(`/job_details/${jobId}`);
+  // };
+
+  const applyForJob = (job) => {
+    navigate("/job_details", { state: { job } }); // Pass job data via state
   };
 
   // --- CALCULATE DISPLAYED JOBS (pagination) ---
@@ -287,7 +291,7 @@ const Joblistingnew = () => {
                                 fontSize: "12px",
                                 textTransform: "none",
                               }}
-                              onClick={() => applyForJob(job._id)}
+                              onClick={() => applyForJob(job)}
                             >
                               Details
                             </Button>

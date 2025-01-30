@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import CreatableSelect from "react-select/creatable";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import ReactQuill from "react-quill";
 
 // Custom styling for the form
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -138,16 +139,15 @@ const Postajob = () => {
     }
 
     if (selectedOption.length > 0) {
-      formToSubmit.append(
-        "skillsRequired",
-        JSON.stringify(selectedOption.map((option) => option.value))
+      selectedOption.forEach((option) =>
+        formToSubmit.append("skillsRequired[]", option.value)
       );
     }
 
     fetch(`${import.meta.env.VITE_API_URL}/api/v1/jobs/create-new-jobs`, {
       method: "POST",
       body: formToSubmit,
-      credentials: "include", // This will include credentials such as cookies
+      credentials: "include", // Include credentials such as cookies
     })
       .then((res) => res.json())
       .then((result) => {
@@ -228,6 +228,10 @@ const Postajob = () => {
       ...provided,
       color: "#fff",
     }),
+  };
+
+  const handleDescriptionChange = (value) => {
+    setFormData({ ...formData, description: value });
   };
 
   return (
@@ -404,16 +408,12 @@ const Postajob = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  multiline
-                  rows={4}
-                  label="Job Description"
-                  name="description"
+                <InputLabel>Job Description</InputLabel>
+                <ReactQuill
+                  className="h-52"
                   value={formData.description}
-                  onChange={handleInputChange}
-                  placeholder="Job Description"
+                  onChange={handleDescriptionChange}
+                  theme="snow"
                 />
               </Grid>
 

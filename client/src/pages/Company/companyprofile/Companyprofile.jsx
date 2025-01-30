@@ -22,7 +22,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
+import ReactQuill from "react-quill";
+import CreatableSelect from "react-select/creatable";
+import { FormControl } from "@mui/material";
 
 const CompanyProfile = () => {
   const navigate = useNavigate();
@@ -162,7 +168,7 @@ const CompanyProfile = () => {
   }
 
   return (
-    <Container sx={{ py: 5 }} maxWidth='xl'>
+    <Container sx={{ py: 5 }} maxWidth="xl">
       <Typography
         variant="h3"
         component="h1"
@@ -191,8 +197,6 @@ const CompanyProfile = () => {
             <TableBody>
               {jobs.map((job) => (
                 <TableRow key={job._id}>
-                  
-                 
                   <TableCell>{job.jobTitle}</TableCell>
                   <TableCell>{job.companyName}</TableCell>
                   <TableCell>{job.jobLocation}</TableCell>
@@ -200,7 +204,7 @@ const CompanyProfile = () => {
                     {job.minPrice} - {job.maxPrice} {job.salaryType}
                   </TableCell>
                   <TableCell>{job.experienceLevel}</TableCell>
-                  <TableCell align="center" sx={{ p: 0}}>
+                  <TableCell align="center" sx={{ p: 0 }}>
                     <Button
                       onClick={() => handleEdit(job)}
                       size="small"
@@ -224,6 +228,9 @@ const CompanyProfile = () => {
                     >
                       <Button size="small" color="warning" variant="contained">
                         Resume
+                      </Button>
+                      <Button size="small" color="warning" variant="contained">
+                        View
                       </Button>
                     </Link>
                   </TableCell>
@@ -311,17 +318,29 @@ const CompanyProfile = () => {
                 }
               />
             </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                label="Salary Type"
-                fullWidth
-                margin="normal"
-                value={editJob?.salaryType || ""}
-                onChange={(e) =>
-                  setEditJob({ ...editJob, salaryType: e.target.value })
-                }
-              />
+           
+
+            <Grid item xs={12} sm={4}>
+              <FormControl fullWidth>
+                <InputLabel>Salary Type</InputLabel>
+                <Select
+                  labelId="salary-type-label"
+                  id="salary-type"
+                  value={editJob?.salaryType || ""}
+                  name="salaryType"
+                  onChange={(e) =>
+                    setEditJob({ ...editJob, salaryType: e.target.value })
+                  }
+                  InputLabelProps={{ shrink: true }}
+                >
+                  <MenuItem value="">Choose your salary</MenuItem>
+                  <MenuItem value="Hourly">Hourly</MenuItem>
+                  <MenuItem value="Monthly">Monthly</MenuItem>
+                  <MenuItem value="Yearly">Yearly</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
+
             <Grid item xs={12} md={4}>
               <TextField
                 label="Experience Level"
@@ -333,17 +352,35 @@ const CompanyProfile = () => {
                 }
               />
             </Grid>
+
             <Grid item xs={12} md={4}>
-              <TextField
-                label="Skills Required"
-                fullWidth
-                margin="normal"
-                value={editJob?.skillsRequired || ""}
-                onChange={(e) =>
-                  setEditJob({ ...editJob, skillsRequired: e.target.value })
+              <Typography variant="subtitle1" gutterBottom>
+                Skills Required
+              </Typography>
+              <CreatableSelect
+                isMulti
+                value={
+                  editJob?.skillsRequired?.map((skill) => ({
+                    value: skill,
+                    label: skill,
+                  })) || []
                 }
+                onChange={(selected) =>
+                  setEditJob({
+                    ...editJob,
+                    skillsRequired: selected.map((option) => option.value),
+                  })
+                }
+                placeholder="Type and press Enter to add skills"
+                styles={{
+                  menu: (provided) => ({
+                    ...provided,
+                    zIndex: 9999,
+                  }),
+                }}
               />
             </Grid>
+
             <Grid item xs={12} md={4}>
               <TextField
                 label="Employment Type"
@@ -367,16 +404,15 @@ const CompanyProfile = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                label="Description"
-                fullWidth
-                multiline
-                rows={4}
-                margin="normal"
+              <Typography variant="subtitle1" gutterBottom>
+                Job Description
+              </Typography>
+              <ReactQuill
                 value={editJob?.description || ""}
-                onChange={(e) =>
-                  setEditJob({ ...editJob, description: e.target.value })
+                onChange={(value) =>
+                  setEditJob({ ...editJob, description: value })
                 }
+                theme="snow"
               />
             </Grid>
           </Grid>

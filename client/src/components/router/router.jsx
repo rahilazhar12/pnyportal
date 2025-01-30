@@ -111,7 +111,7 @@ const router = createBrowserRouter([
       },
 
       // Jobs
-      { path: "job_details/:id", element: <Jobdetailnew /> },
+      { path: "job_details", element: <Jobdetailnew /> },
       { path: "category/:slug", element: <CategoryDetail /> },
       { path: "all-categories", element: <Browsesector /> },
 
