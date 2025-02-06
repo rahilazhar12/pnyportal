@@ -1,36 +1,36 @@
 // emailService.js
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'rahil.azhar10@gmail.com',
-        pass: 'kxfl vyti iamn jjre'
-    }
+  service: "gmail",
+  auth: {
+    user: "rahil.azhar10@gmail.com",
+    pass: "kxfl vyti iamn jjre",
+  },
 });
 
 const sendEmail = async (to, subject, text) => {
-    const mailOptions = {
-        from: 'rahil.azhar10@gmail.com',
-        to,
-        subject,
-        text
-    };
+  const mailOptions = {
+    from: "rahil.azhar10@gmail.com",
+    to,
+    subject,
+    text,
+  };
 
-    try {
-        await transporter.sendMail(mailOptions);
-        console.log("Notification email sent successfully.");
-    } catch (error) {
-        console.error("Error sending email:", error);
-    }
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Notification email sent successfully.");
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
 };
 
 const sendVerificationCodeEmail = async (email, code, userName) => {
-    const mailOptions = {
-        from: 'rahil.azhar10@gmail.com',
-        to: email,
-        subject: "Verification Code",
-        html: `
+  const mailOptions = {
+    from: "rahil.azhar10@gmail.com",
+    to: email,
+    subject: "Verification Code",
+    html: `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
           <div style="text-align: center; padding-bottom: 20px;">
               <img src="https://pnygroup.co/wp-content/uploads/2021/11/235146443_1714244258779215_7609558304785368671_n-1.png" alt="PNY Job Portal Logo" style="width: 150px;"/>
@@ -49,16 +49,15 @@ const sendVerificationCodeEmail = async (email, code, userName) => {
               © 2024 PNY Job Portal, Inc. All rights reserved.
               <a href="https://www.pnytrainings.com/" style="color: #007bff; text-decoration: none;">Visit our website</a>
           </footer>
-      </div>`
-    };
+      </div>`,
+  };
 
-    try {
-        await transporter.sendMail(mailOptions);
-        console.log("Verification email sent successfully.");
-    } catch (error) {
-        console.error("Error sending verification email:", error);
-    }
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Verification email sent successfully.");
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+  }
 };
-
 
 module.exports = { sendEmail, sendVerificationCodeEmail };

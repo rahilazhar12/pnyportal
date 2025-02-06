@@ -102,7 +102,7 @@ const JobPage = () => {
           </div>
 
           {/* Salary, Duration, and Work Type */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 space-y-2 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 space-y-2 sm:space-y-0 mt-2">
             <span className="text-lg font-semibold text-center sm:text-left">
               PKR {jobData.maxPrice} • {jobData.salaryType} •{" "}
               {jobData.experienceLevel}

@@ -280,7 +280,8 @@ const Joblistingnew = () => {
                                   {job.jobLocation}
                                 </li>
                                 <li>{job.maxPrice}</li>
-                                <div>{job.description.split(" ").slice(0, 14).join(" ")}...</div>
+                                {/* <div dangerouslySetInnerHTML={{ __html: job.description.split(" ").slice(0, 14).join(" ") + "..." }} /> */}
+
                               </ul>
                               
 

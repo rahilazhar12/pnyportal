@@ -102,9 +102,12 @@ const Home = () => {
   };
 
   // Navigate to job details when clicking on a specific job
-  const navigateToJobDetails = (jobId) => {
-    navigate(`/job_details/${jobId}`);
+  const applyForJob = (job) => {
+    const jobTitleWithoutSpaces = job.jobTitle.replace(/\s+/g, ""); // Remove spaces
+    const jobIdLastTwoDigits = job._id.slice(-5); // Get last two digits of _id
+    navigate(`/job_details/${jobTitleWithoutSpaces}-${jobIdLastTwoDigits}`, { state: { job } }); // Pass job data via state
   };
+
 
   return (
     <>
@@ -266,7 +269,7 @@ const Home = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => navigateToJobDetails(job._id)}
+                  onClick={() => applyForJob(job)}
                 >
                   Details
                 </Button>
