@@ -99,7 +99,7 @@ const Cv1 = () => {
                 <img
                   src={profileImageDataUrl}
                   alt="Profile picture of a man in a suit"
-                  className="rounded-full border-4 border-white"
+                  className="rounded-full w-52 border-4 border-white"
                 />
               )}
             </div>

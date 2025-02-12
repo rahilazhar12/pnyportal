@@ -19,6 +19,8 @@ const { requireAuth, requireAuthedit } = require("../middlewares/requiredauth");
 const upload = require("../multer/imgConfig.js");
 const checkProfileExists = require("../middlewares/checkProfileExists.js");
 const { uploadVideo, getVideosByUserId } = require("../controllers/Profilecontroller/video.controller.js");
+const checkJobExpiry = require("../middlewares/Jobexpirycheck.js");
+checkJobExpiry
 
 const router = express.Router();
 

@@ -9,9 +9,11 @@ const jobsModel = new mongoose.Schema(
     maxPrice: { type: Number },
     salaryType: { type: String },
     jobLocation: { type: String },
-    postingDate: { type: String },
+    postingDate: { type: Date },
+    expirationDate: { type: Date }, // Add expiration date field
     experienceLevel: { type: String },
     skillsRequired: { type: [String] },
+    jobDescription: { type: String },
     employmentType: { type: String },
     description: { type: String },
     jobPostedBy: { type: String },

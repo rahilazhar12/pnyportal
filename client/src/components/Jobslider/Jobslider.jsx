@@ -71,7 +71,9 @@ function Jobslider() {
   const applyForJob = (job) => {
     const jobTitleWithoutSpaces = job.jobTitle.replace(/\s+/g, ""); // Remove spaces
     const jobIdLastTwoDigits = job._id.slice(-5); // Get last two digits of _id
-    navigate(`/job_details/${jobTitleWithoutSpaces}-${jobIdLastTwoDigits}`, { state: { job } }); // Pass job data via state
+    navigate(`/job_details/${jobTitleWithoutSpaces}-${jobIdLastTwoDigits}`, {
+      state: { job },
+    }); // Pass job data via state
   };
 
   return (
@@ -85,8 +87,7 @@ function Jobslider() {
             <div key={job._id} className="px-2">
               <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <div className="p-5">
-                  <button
-                  onClick={() => applyForJob(job)}>
+                  <button onClick={() => applyForJob(job)}>
                     <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                       {job.jobTitle}
                     </h5>

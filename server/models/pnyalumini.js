@@ -15,7 +15,8 @@ const PNYAlumniSchema = new mongoose.Schema(
     profilePicture: { type: String }, // Add this field
     otp: { type: String },
     otpexpires: { type: Date },
-    
+    applicationsCount: { type: Number, default: 0 }, // Track the number of applied jobs
+    appliedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "jobs" }], // Store applied job IDs
   },
   {
     timestamps: true,

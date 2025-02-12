@@ -138,7 +138,6 @@
   padding: 36px 30px;
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
   -webkit-transition: 0.4s;
   -moz-transition: 0.4s;
   -o-transition: 0.4s;
@@ -180,7 +179,7 @@
   display: inline-block;
   margin-right: 48px;
   font-size: 15px;
-  color: #808080;
+  color: #3e3e3e;
   line-height: 1.8;
 }
 @media only screen and (min-width: 768px) and (max-width: 991px) {

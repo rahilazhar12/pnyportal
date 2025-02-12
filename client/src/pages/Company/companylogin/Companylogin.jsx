@@ -405,6 +405,7 @@ const CompanyLogin = () => {
           aria-describedby="verification-dialog-description"
           fullWidth
           maxWidth="xs"
+       
         >
           <DialogTitle>Enter Verification Code</DialogTitle>
           <DialogContent>
@@ -451,11 +452,12 @@ const CompanyLogin = () => {
           TransitionComponent={Transition}
           fullWidth
           maxWidth="xs"
+          
         >
           <DialogTitle>Reset Password</DialogTitle>
-          <DialogContent>
+          <DialogContent className="mt-10">
             <TextField
-              label="Email"
+              placeholder="Please Enter Your Email"
               fullWidth
               value={email}
               onChange={(e) => setEmail(e.target.value)}

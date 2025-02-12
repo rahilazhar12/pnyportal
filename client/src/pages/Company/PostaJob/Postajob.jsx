@@ -107,7 +107,9 @@ const Postajob = () => {
     salaryType: "",
     jobLocation: "",
     postingDate: "",
+    expirationDate: "", // <-- Add this
     experienceLevel: "",
+    jobDescription: "",
     companyLogo: null,
     employmentType: "",
     description: "",
@@ -147,7 +149,7 @@ const Postajob = () => {
     fetch(`${import.meta.env.VITE_API_URL}/api/v1/jobs/create-new-jobs`, {
       method: "POST",
       body: formToSubmit,
-      credentials: "include", // Include credentials such as cookies
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((result) => {
@@ -165,12 +167,14 @@ const Postajob = () => {
             salaryType: "",
             jobLocation: "",
             postingDate: "",
+            jobDescription: "",
+            expirationDate: "", // Reset expiration date on success
             experienceLevel: "",
             companyLogo: null,
             employmentType: "",
             description: "",
             jobPostedBy: "",
-            category: "", // Reset category on success
+            category: "",
           });
           setSelectedOption([]);
           setFileInputKey(Date.now()); // Force file input to reset
@@ -343,6 +347,19 @@ const Postajob = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  type="date"
+                  label="Expiration Date"
+                  name="expirationDate"
+                  value={formData.expirationDate}
+                  onChange={handleInputChange}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel>Experience Level</InputLabel>
                   <Select
@@ -365,6 +382,36 @@ const Postajob = () => {
                     </MenuItem>
                   </Select>
                 </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  type="text"
+                  label="Short Description"
+                  name="jobDescription"
+                  value={formData.jobDescription}
+                  onChange={(e) => {
+                    if (e.target.value.length <= 300) {
+                      handleInputChange(e); // Update state only if within limit
+                    }
+                  }}
+                  onPaste={(e) => {
+                    e.preventDefault(); // Prevent default paste behavior
+                    const pastedText = e.clipboardData
+                      .getData("text")
+                      .substring(0, 300); // Get only first 200 chars
+                    handleInputChange({
+                      target: { name: "jobDescription", value: pastedText },
+                    }); // Update state manually
+                  }}
+                  InputLabelProps={{ shrink: true }}
+                  multiline
+                  rows={4} // Adjust rows as needed
+                  helperText={`${
+                    300 - formData.jobDescription.length
+                  } characters remaining`}
+                />
               </Grid>
 
               <Grid item xs={12}>
@@ -417,7 +464,7 @@ const Postajob = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6} marginTop={5}>
                 <TextField
                   required
                   fullWidth
@@ -430,7 +477,7 @@ const Postajob = () => {
               </Grid>
 
               {/* Category Selection Field */}
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6} marginTop={5}>
                 <FormControl fullWidth>
                   <InputLabel>Category</InputLabel>
                   <Select

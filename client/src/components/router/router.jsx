@@ -21,6 +21,7 @@ import Settinguser from "../../pages/Userauth/settings/profile";
 import Cv1 from "../Cv/Cv1";
 import Resetpassword from "../../pages/resetpass/Resetpassword";
 import CompanySettings from "../../pages/Company/Settings/Companysettings";
+import UserApplication from "../../pages/Userauth/Userapplication";
 
 // Lazy loaded components
 const Home = lazy(() => import("../../pages/home/Home"));
@@ -112,8 +113,9 @@ const router = createBrowserRouter([
 
       // Jobs
       { path: "job_details/:title", element: <Jobdetailnew /> },
-      { path: "category/:slug", element: <CategoryDetail /> },
+      { path: "category/:slug", element: <CategoryDetail /> },  
       { path: "all-categories", element: <Browsesector /> },
+      { path: "user-dashboard", element: <UserApplication /> },
 
       // Applications
       { path: "application_details/:id", element: <Applications /> },

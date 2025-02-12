@@ -10,9 +10,11 @@ const UserSchema = new mongoose.Schema(
     role: { type: String, default: "User" },
     verificationCode: { type: String },
     isVerified: { type: Boolean, default: false },
-    profilePicture: { type: String }, // Add this field
+    profilePicture: { type: String },
     otp: { type: String },
     otpexpires: { type: Date },
+    applicationsCount: { type: Number, default: 0 }, // Track the number of applied jobs
+    appliedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "jobs" }], // Store applied job IDs
   },
   {
     timestamps: true,

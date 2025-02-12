@@ -39,7 +39,36 @@ const Applications = () => {
       }
     };
     fetchApplications();
-  }, []);
+  }, [id]);
+
+  const handleViewAndUpdateStatus = async (app) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/v1/jobs/update-status/${app.applicant}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: "Open" }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update application status");
+      }
+
+      setApplications((prevApplications) =>
+        prevApplications.map((application) =>
+          application._id === app._id ? { ...application, status: "Open" } : application
+        )
+      );
+      
+      navigate(`/user_profile/${app.applicant}`);
+    } catch (error) {
+      console.error("Error updating application status:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -54,6 +83,7 @@ const Applications = () => {
     );
   }
 
+  console.log(applications , 'app')
   return (
     <Box p={4}>
       <Typography variant="h4" align="center" gutterBottom>
@@ -68,6 +98,7 @@ const Applications = () => {
               <TableCell align="center">Contact</TableCell>
               <TableCell align="center">Email</TableCell>
               <TableCell align="center">Application Date</TableCell>
+              <TableCell align="center">Status</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -83,14 +114,15 @@ const Applications = () => {
                     ? new Date(app.applicationDate).toLocaleDateString()
                     : "N/A"}
                 </TableCell>
+                <TableCell align="center">{app.status}</TableCell>
                 <TableCell align="center">
                   <Button
                     variant="contained"
                     color="primary"
                     size="small"
-                    onClick={() => navigate(`/user_profile/${app.applicant}`)}
+                    onClick={() => handleViewAndUpdateStatus(app)}
                   >
-                    View Profile
+                    View
                   </Button>
                 </TableCell>
               </TableRow>

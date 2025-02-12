@@ -400,3 +400,42 @@ export const locationOptions = [
 ];
 
 
+export const experienceLevels = [
+  { label: "Intern / Student", value: "Intern / Student" },
+  { label: "Entry Level", value: "Entry Level" },
+  { label: "Experienced Professional", value: "Experienced Professional" },
+  { label: "Department Head", value: "Department Head" },
+  { label: "GM / CEO / Country Head / President", value: "GM / CEO/Country Head / President" },
+];
+
+export const employmentTypes = [
+  { label: "Full-time", value: "Full-time" },
+  { label: "Part-time", value: "Part-time" },
+  { label: "Temporary", value: "Temporary" },
+];
+
+
+export const jobCategories = [
+  { label: "Design & Creative", value: "design-creative" },
+  { label: "Design & Development", value: "design-development" },
+  { label: "Sales & Marketing", value: "sales-marketing" },
+  { label: "Mobile Application", value: "mobile-application" },
+  { label: "Construction", value: "construction" },
+  { label: "Information Technology", value: "information-technology" },
+  { label: "Real Estate", value: "real-estate" },
+  { label: "Content Writer", value: "content-writer" },
+  { label: "Finance & Accounting", value: "finance-accounting" },
+  { label: "Customer Service", value: "customer-service" },
+  { label: "Healthcare & Medical", value: "healthcare-medical" },
+  { label: "Engineering", value: "engineering" },
+  { label: "Education & Training", value: "education-training" },
+  { label: "Human Resources", value: "human-resources" },
+  { label: "Administrative & Clerical", value: "administrative-clerical" },
+  { label: "Legal", value: "legal" },
+  { label: "Manufacturing & Operations", value: "manufacturing-operations" },
+  { label: "Project Management", value: "project-management" },
+  { label: "Logistics & Supply Chain", value: "logistics-supply-chain" },
+  { label: "Retail & E-commerce", value: "retail-ecommerce" },
+];
+
+

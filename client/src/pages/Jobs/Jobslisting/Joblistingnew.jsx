@@ -271,23 +271,23 @@ const Joblistingnew = () => {
                             </div>
                             <div className="job-tittle job-tittle2">
                               <button onClick={() => applyForJob(job)}>
-                                <h4>{job.jobTitle}</h4>
+                                <h4 className="font-bold text-xl mb-2 mt-2">{job.jobTitle}</h4>
                               </button>
                               <ul className="list-none">
-                                <li>{job.companyName}</li>
+                                {/* <li>{job.companyName}</li>
                                 <li>
                                   <i className="fas fa-map-marker-alt" />
                                   {job.jobLocation}
                                 </li>
-                                <li>{job.maxPrice}</li>
-                                {/* <div dangerouslySetInnerHTML={{ __html: job.description.split(" ").slice(0, 14).join(" ") + "..." }} /> */}
+                                <li>{job.maxPrice}</li> */}
+                               <li className="text-black">{job.jobDescription}</li>
 
                               </ul>
                               
 
                             </div>
                           </div>
-                          <div className="items-link items-link2 float-right">
+                          <div className="items-link items-link2 float-left">
                             <Button
                               variant="outlined"
                               style={{

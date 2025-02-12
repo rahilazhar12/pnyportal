@@ -79,7 +79,7 @@ const JobPage = () => {
         </title>
         <meta
           name="description"
-          content={jobData.description.split(" ").slice(0, 160).join(" ")}
+          content={jobData.jobDescription.split(" ").slice(0, 160).join(" ")}
         />
       </Helmet>
 
@@ -123,7 +123,12 @@ const JobPage = () => {
           <div className="flex items-center text-gray-500 text-sm space-x-2">
             <HiOutlineLocationMarker className="w-4 h-4 text-gray-500" />
             <span>
-              {jobData.jobLocation} - {jobData.postingDate}
+              {jobData.jobLocation} - {jobData.postingDate} -{" "}
+              {new Date(jobData.expirationDate) < new Date() ? (
+                <span className="text-red-500 font-semibold">Expired</span>
+              ) : (
+                jobData.expirationDate
+              )}
             </span>
           </div>
 

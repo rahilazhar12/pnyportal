@@ -29,6 +29,9 @@ import {
 import ReactQuill from "react-quill";
 import CreatableSelect from "react-select/creatable";
 import { FormControl } from "@mui/material";
+import { experienceLevels } from "../../../components/Data/Dropdownsdata";
+import { employmentTypes } from "../../../components/Data/Dropdownsdata";
+import { jobCategories } from "../../../components/Data/Dropdownsdata";
 
 const CompanyProfile = () => {
   const navigate = useNavigate();
@@ -167,6 +170,14 @@ const CompanyProfile = () => {
     );
   }
 
+  const applyForJob = (job) => {
+    const jobTitleWithoutSpaces = job.jobTitle.replace(/\s+/g, ""); // Remove spaces
+    const jobIdLastTwoDigits = job._id.slice(-5); // Get last two digits of _id
+    navigate(`/job_details/${jobTitleWithoutSpaces}-${jobIdLastTwoDigits}`, {
+      state: { job },
+    }); // Pass job data via state
+  };
+
   return (
     <Container sx={{ py: 5 }} maxWidth="xl">
       <Typography
@@ -176,7 +187,7 @@ const CompanyProfile = () => {
         align="center"
         sx={{ fontWeight: "bold" }}
       >
-        Company Jobs
+        Company Dashboard
       </Typography>
       {jobs.length > 0 ? (
         <TableContainer
@@ -229,10 +240,12 @@ const CompanyProfile = () => {
                       <Button size="small" color="warning" variant="contained">
                         Resume
                       </Button>
-                      <Button size="small" color="warning" variant="contained">
+                    </Link>
+                    <Button onClick={() => applyForJob(job)} className="ml-2">
+                      <Button size="small" color="info" variant="contained">
                         View
                       </Button>
-                    </Link>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -249,25 +262,26 @@ const CompanyProfile = () => {
       <Modal open={openModal} onClose={handleClose}>
         <Box
           sx={{
-            width: { xs: "90%", md: "60%", lg: "50%" },
-            maxHeight: { xs: "80vh", md: "90vh" },
+            width: { xs: "95%", sm: "80%", md: "60%", lg: "50%" },
+            maxHeight: "90vh",
             overflowY: "auto",
             p: 4,
             bgcolor: "background.paper",
             mx: "auto",
-            mt: "1%",
-            borderRadius: 2,
+            mt: 2,
+            borderRadius: 3,
+            boxShadow: 3,
           }}
         >
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h5" fontWeight="bold" gutterBottom>
             Edit Job
           </Typography>
-          <Grid container spacing={2}>
+          <Grid container spacing={3}>
+            {/** Job Details Section */}
             <Grid item xs={12} md={4}>
               <TextField
                 label="Job Title"
                 fullWidth
-                margin="normal"
                 value={editJob?.jobTitle || ""}
                 onChange={(e) =>
                   setEditJob({ ...editJob, jobTitle: e.target.value })
@@ -278,7 +292,6 @@ const CompanyProfile = () => {
               <TextField
                 label="Company Name"
                 fullWidth
-                margin="normal"
                 value={editJob?.companyName || ""}
                 onChange={(e) =>
                   setEditJob({ ...editJob, companyName: e.target.value })
@@ -289,18 +302,18 @@ const CompanyProfile = () => {
               <TextField
                 label="Location"
                 fullWidth
-                margin="normal"
                 value={editJob?.jobLocation || ""}
                 onChange={(e) =>
                   setEditJob({ ...editJob, jobLocation: e.target.value })
                 }
               />
             </Grid>
+
+            {/** Salary Section */}
             <Grid item xs={12} md={4}>
               <TextField
                 label="Minimum Salary"
                 fullWidth
-                margin="normal"
                 value={editJob?.minPrice || ""}
                 onChange={(e) =>
                   setEditJob({ ...editJob, minPrice: e.target.value })
@@ -311,29 +324,21 @@ const CompanyProfile = () => {
               <TextField
                 label="Maximum Salary"
                 fullWidth
-                margin="normal"
                 value={editJob?.maxPrice || ""}
                 onChange={(e) =>
                   setEditJob({ ...editJob, maxPrice: e.target.value })
                 }
               />
             </Grid>
-           
-
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} md={4}>
               <FormControl fullWidth>
                 <InputLabel>Salary Type</InputLabel>
                 <Select
-                  labelId="salary-type-label"
-                  id="salary-type"
                   value={editJob?.salaryType || ""}
-                  name="salaryType"
                   onChange={(e) =>
                     setEditJob({ ...editJob, salaryType: e.target.value })
                   }
-                  InputLabelProps={{ shrink: true }}
                 >
-                  <MenuItem value="">Choose your salary</MenuItem>
                   <MenuItem value="Hourly">Hourly</MenuItem>
                   <MenuItem value="Monthly">Monthly</MenuItem>
                   <MenuItem value="Yearly">Yearly</MenuItem>
@@ -341,22 +346,91 @@ const CompanyProfile = () => {
               </FormControl>
             </Grid>
 
+            {/** Experience, Skills, Employment Type */}
             <Grid item xs={12} md={4}>
-              <TextField
-                label="Experience Level"
-                fullWidth
-                margin="normal"
-                value={editJob?.experienceLevel || ""}
-                onChange={(e) =>
-                  setEditJob({ ...editJob, experienceLevel: e.target.value })
-                }
-              />
+              <FormControl fullWidth>
+                <InputLabel>Experience Level</InputLabel>
+                <Select
+                  value={editJob?.experienceLevel || ""}
+                  onChange={(e) =>
+                    setEditJob({ ...editJob, experienceLevel: e.target.value })
+                  }
+                >
+                  {experienceLevels.map((level) => (
+                    <MenuItem key={level.value} value={level.value}>
+                      {level.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
 
             <Grid item xs={12} md={4}>
-              <Typography variant="subtitle1" gutterBottom>
-                Skills Required
-              </Typography>
+              <FormControl fullWidth>
+                <InputLabel>Employment Type</InputLabel>
+                <Select
+                  value={editJob?.employmentType || ""}
+                  onChange={(e) =>
+                    setEditJob({ ...editJob, employmentType: e.target.value })
+                  }
+                >
+                  {employmentTypes.map((type) => (
+                    <MenuItem key={type.value} value={type.value}>
+                      {type.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/** Category & Description */}
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth>
+                <InputLabel>Category</InputLabel>
+                <Select
+                  value={editJob?.category || ""}
+                  onChange={(e) =>
+                    setEditJob({ ...editJob, category: e.target.value })
+                  }
+                >
+                  {jobCategories.map((category) => (
+                    <MenuItem key={category.value} value={category.value}>
+                      {category.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Expiration Date"
+                type="date"
+                fullWidth
+                value={editJob?.expirationDate || ""}
+                onChange={(e) =>
+                  setEditJob({ ...editJob, expirationDate: e.target.value })
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Short Description"
+                multiline
+                rows={3}
+                value={editJob?.jobDescription || ""}
+                onChange={(e) =>
+                  e.target.value.length <= 300 &&
+                  setEditJob({ ...editJob, jobDescription: e.target.value })
+                }
+                helperText={`${
+                  300 - (editJob?.jobDescription?.length || 0)
+                } characters remaining`}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={12}>
+              <Typography variant="subtitle1">Skills Required</Typography>
               <CreatableSelect
                 isMulti
                 value={
@@ -371,43 +445,16 @@ const CompanyProfile = () => {
                     skillsRequired: selected.map((option) => option.value),
                   })
                 }
-                placeholder="Type and press Enter to add skills"
-                styles={{
-                  menu: (provided) => ({
-                    ...provided,
-                    zIndex: 9999,
-                  }),
-                }}
+                placeholder="Add skills"
               />
             </Grid>
 
-            <Grid item xs={12} md={4}>
-              <TextField
-                label="Employment Type"
-                fullWidth
-                margin="normal"
-                value={editJob?.employmentType || ""}
-                onChange={(e) =>
-                  setEditJob({ ...editJob, employmentType: e.target.value })
-                }
-              />
-            </Grid>
-            <Grid item xs={12} md={12}>
-              <TextField
-                label="Category"
-                fullWidth
-                margin="normal"
-                value={editJob?.category || ""}
-                onChange={(e) =>
-                  setEditJob({ ...editJob, category: e.target.value })
-                }
-              />
-            </Grid>
+            {/** Expiration Date & Job Description */}
+
             <Grid item xs={12}>
-              <Typography variant="subtitle1" gutterBottom>
-                Job Description
-              </Typography>
+              <Typography variant="subtitle1">Job Description</Typography>
               <ReactQuill
+              className="h-52"
                 value={editJob?.description || ""}
                 onChange={(value) =>
                   setEditJob({ ...editJob, description: value })
@@ -416,9 +463,17 @@ const CompanyProfile = () => {
               />
             </Grid>
           </Grid>
-          <Box display="flex" justifyContent="flex-end" mt={2}>
-            <Button onClick={handleSave} variant="contained" color="primary">
-              Save
+
+          {/** Save Button */}
+          <Box display="flex" justifyContent="flex-end" mt={3}>
+            <Button
+              onClick={handleSave}
+              variant="contained"
+              color="primary"
+              size="large"
+              sx={{ borderRadius: 2, px: 3  , marginTop:5}}
+            >
+              Save Job
             </Button>
           </Box>
         </Box>
