@@ -518,6 +518,7 @@ export const locationOptions = [
   { value: "Nabisar", label: "Nabisar" },
   { value: "Kario Ghanwar", label: "Kario Ghanwar" },
   { value: "Parachinar", label: "Parachinar" },
+  { value: "Other", label: "Other" },
 ];
 
 export const industryOptions = [

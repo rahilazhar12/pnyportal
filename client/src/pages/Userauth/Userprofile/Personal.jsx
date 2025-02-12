@@ -252,7 +252,7 @@ function Personal() {
                 CNIC
               </label>
               <input
-                type="text"
+                type="number"
                 name="cnic"
                 value={formData.cnic || ""}
                 onChange={handleChange}
@@ -267,7 +267,7 @@ function Personal() {
                 Mobile *
               </label>
               <input
-                type="text"
+                type="number"
                 name="mobile"
                 value={formData.mobile || ""}
                 onChange={handleChange}

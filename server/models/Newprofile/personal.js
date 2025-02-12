@@ -25,8 +25,8 @@ const personalInfoSchema = new mongoose.Schema({
   city: { type: String },
   area: { type: String },
   address: { type: String },
-  cnic: { type: String },
-  mobile: { type: String, required: true },
+  cnic: { type: Number },
+  mobile: { type: Number, required: true },
   careerLevel: { type: String },
   expectedSalary: { type: String },
   profilePicture: { type: String }, // Add this field

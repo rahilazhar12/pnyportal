@@ -80,7 +80,7 @@ const DropdownUser = () => {
                     ? "/admin-dashboard/admin-profile"
                     : user?.role === "company"
                     ? "company-profile"
-                    : "/settings"
+                    : "/profile"
                 }
                 className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
               >
@@ -121,7 +121,7 @@ const DropdownUser = () => {
               </li>
             )}
 
-            {(user?.role === "user" || user?.role === "pnyalumini") && (
+            {(user?.role === "User" || user?.role === "pnyalumini") && (
               <li>
                 <Link
                   to="/user-dashboard"

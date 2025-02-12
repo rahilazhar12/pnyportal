@@ -14,7 +14,10 @@ import {
   CircularProgress,
   Alert,
   AlertTitle,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { pink, grey } from "@mui/material/colors";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -88,7 +91,7 @@ const CompanyLogin = () => {
     "",
   ]);
   const [isCodeValid, setIsCodeValid] = useState(null); // null: no check, true: valid, false: invalid
-
+  const [showPassword, setShowPassword] = useState(false);
   // Forgot password / OTP states
   const [forgotPasswordModal, setForgotPasswordModal] = useState(false);
   const [otpModal, setOtpModal] = useState(false);
@@ -327,6 +330,10 @@ const CompanyLogin = () => {
     }
   };
 
+  const handleTogglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -369,12 +376,22 @@ const CompanyLogin = () => {
                 fullWidth
                 name="password"
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"} // Toggle between text and password
                 id="password"
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleTogglePassword} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
+
               <Button
                 type="submit"
                 fullWidth
@@ -405,7 +422,6 @@ const CompanyLogin = () => {
           aria-describedby="verification-dialog-description"
           fullWidth
           maxWidth="xs"
-       
         >
           <DialogTitle>Enter Verification Code</DialogTitle>
           <DialogContent>
@@ -452,7 +468,6 @@ const CompanyLogin = () => {
           TransitionComponent={Transition}
           fullWidth
           maxWidth="xs"
-          
         >
           <DialogTitle>Reset Password</DialogTitle>
           <DialogContent className="mt-10">

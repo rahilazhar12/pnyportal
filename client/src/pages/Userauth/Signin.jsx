@@ -14,7 +14,10 @@ import {
   CircularProgress,
   Alert,
   AlertTitle,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { pink, grey } from "@mui/material/colors";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
@@ -76,6 +79,7 @@ const Signin = () => {
     message: "",
     open: false,
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [verificationModal, setVerificationModal] = useState(false);
   const [verificationCode, setVerificationCode] = useState([
@@ -245,8 +249,11 @@ const Signin = () => {
     setAlert({ ...alert, open: false });
   };
 
-  useEffect(() => {
-  }, [verificationModal]);
+  useEffect(() => {}, [verificationModal]);
+
+  const handleTogglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -266,7 +273,13 @@ const Signin = () => {
             </StyledAlert>
           )}
           <FormBox>
-            <Typography component="h1" variant="h6" align="center" gutterBottom className="text-blue-500">
+            <Typography
+              component="h1"
+              variant="h6"
+              align="center"
+              gutterBottom
+              className="text-blue-500"
+            >
               Step into a Future You'll Love!
             </Typography>
             <Typography
@@ -298,13 +311,28 @@ const Signin = () => {
                 fullWidth
                 name="password"
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"} // Toggle between text and password
                 id="password"
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleTogglePassword} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
-              <Link to='/rest-password' className="text-sm md:ml-1 underline text-blue-700">Forgot password?</Link>
+
+              <Link
+                to="/rest-password"
+                className="text-sm md:ml-1 underline text-blue-700"
+              >
+                Forgot password?
+              </Link>
               <Button
                 type="submit"
                 fullWidth

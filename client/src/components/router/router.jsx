@@ -100,7 +100,7 @@ const router = createBrowserRouter([
       { path: "register-student", element: <StudentRegistrationForm /> },
       { path: "login-users", element: <Signin /> },
       { path: "user_profile/:id", element: <Cv1 /> },
-      { path: "settings", element: <Mainview /> },
+      { path: "profile", element: <Mainview /> },
       { path: "settingsuser", element: <Settinguser /> },
       {
         path: "new-profile",

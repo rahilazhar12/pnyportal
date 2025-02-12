@@ -20,6 +20,7 @@ const countryOptions = [
   { value: "ITA", label: "Italy" },
   { value: "BRA", label: "Brazil" },
   { value: "JPN", label: "Japan" },
+  { value: "PAK", label: "Pakistan" },
 ];
 
 const Language = () => {
