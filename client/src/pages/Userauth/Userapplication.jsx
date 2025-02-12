@@ -9,11 +9,14 @@ import {
   Paper,
   Button,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const UserApplication = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -86,7 +89,7 @@ const UserApplication = () => {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => applyForJob(job)}
+                    onClick={() => applyForJob(app.job)}
                   >
                     View
                   </Button>
